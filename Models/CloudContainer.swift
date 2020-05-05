@@ -10,7 +10,7 @@ struct CloudContainer {
 				print(error.localizedDescription)
 			}
 		}
-		FileManager.default.createFile(atPath: url.appendingPathComponent(".placeholder").path, contents: Data())
+//		FileManager.default.createFile(atPath: url.appendingPathComponent(".placeholder").path, contents: Data()) //SAMPLE
 		return url
 	}()
 

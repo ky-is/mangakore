@@ -5,15 +5,27 @@ struct Volume {
 
 	init(_ urls: [URL]) {
 		let imageExtensions = [".png", ".jpg", ".jpeg"]
-		images = urls.filter { url in
-			return imageExtensions.contains { url.lastPathComponent.contains($0) }
-		}
+		images = urls
+			.filter { url in
+				return imageExtensions.contains { url.lastPathComponent.contains($0) }
+			}
+			.sorted { a, b in
+				var aName = a.lastPathComponent
+				var bName = b.lastPathComponent
+				if aName.first == "." {
+					aName = String(aName.dropFirst())
+				}
+				if bName.first == "." {
+					bName = String(bName.dropFirst())
+				}
+				return aName.compare(bName) == .orderedAscending
+			}
 	}
 }
 
-struct Work {
+struct Work: Identifiable {
+	let id: String
 	let icon: URL?
-	let name: String
 	let volumes: [Volume]
 
 	init?(_ url: URL) {
@@ -37,9 +49,13 @@ struct Work {
 				return Volume(children)
 			}
 		}
-		self.name = url.lastPathComponent
+		self.id = url.lastPathComponent
 		self.volumes = volumes.compactMap { $0 }
 		self.icon = self.volumes.first?.images.first
+		if let icon = self.icon {
+			try? FileManager.default.startDownloadingUbiquitousItem(at: icon)
+//			try? FileManager.default.evictUbiquitousItem(at: icon) //SAMPLE
+		}
 	}
 }
 
