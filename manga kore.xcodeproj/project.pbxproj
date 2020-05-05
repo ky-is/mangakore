@@ -13,6 +13,9 @@
 		244146A42461D902008EAFDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 244146A32461D902008EAFDA /* Assets.xcassets */; };
 		244146A72461D902008EAFDA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 244146A62461D902008EAFDA /* Preview Assets.xcassets */; };
 		244146AA2461D902008EAFDA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 244146A82461D902008EAFDA /* LaunchScreen.storyboard */; };
+		244146B92461E0A0008EAFDA /* CloudContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244146B82461E0A0008EAFDA /* CloudContainer.swift */; };
+		244146BB2461EB1D008EAFDA /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244146BA2461EB1D008EAFDA /* DataModel.swift */; };
+		244146BD2461F8FB008EAFDA /* Works.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244146BC2461F8FB008EAFDA /* Works.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +27,10 @@
 		244146A62461D902008EAFDA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		244146A92461D902008EAFDA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		244146AB2461D902008EAFDA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		244146B62461DD97008EAFDA /* manga kore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "manga kore.entitlements"; sourceTree = "<group>"; };
+		244146B82461E0A0008EAFDA /* CloudContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudContainer.swift; sourceTree = "<group>"; };
+		244146BA2461EB1D008EAFDA /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
+		244146BC2461F8FB008EAFDA /* Works.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Works.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +47,8 @@
 		244146912461D8FE008EAFDA = {
 			isa = PBXGroup;
 			children = (
+				244146B72461E08F008EAFDA /* Models */,
+				244146B52461DD50008EAFDA /* Views */,
 				2441469C2461D8FE008EAFDA /* iOS */,
 				2441469B2461D8FE008EAFDA /* Products */,
 			);
@@ -62,6 +71,7 @@
 				244146A32461D902008EAFDA /* Assets.xcassets */,
 				244146A82461D902008EAFDA /* LaunchScreen.storyboard */,
 				244146AB2461D902008EAFDA /* Info.plist */,
+				244146B62461DD97008EAFDA /* manga kore.entitlements */,
 				244146A52461D902008EAFDA /* Preview Content */,
 			);
 			path = iOS;
@@ -73,6 +83,23 @@
 				244146A62461D902008EAFDA /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		244146B52461DD50008EAFDA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				244146BC2461F8FB008EAFDA /* Works.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		244146B72461E08F008EAFDA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				244146B82461E0A0008EAFDA /* CloudContainer.swift */,
+				244146BA2461EB1D008EAFDA /* DataModel.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -147,8 +174,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				2441469E2461D8FE008EAFDA /* AppDelegate.swift in Sources */,
+				244146BD2461F8FB008EAFDA /* Works.swift in Sources */,
 				244146A02461D8FE008EAFDA /* SceneDelegate.swift in Sources */,
+				244146BB2461EB1D008EAFDA /* DataModel.swift in Sources */,
 				244146A22461D8FE008EAFDA /* ContentView.swift in Sources */,
+				244146B92461E0A0008EAFDA /* CloudContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,7 +314,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "iOS/manga kore.entitlements";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"iOS/Preview Content\"";
 				DEVELOPMENT_TEAM = P3YWQG9C86;
 				ENABLE_PREVIEWS = YES;
@@ -304,7 +336,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "iOS/manga kore.entitlements";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"iOS/Preview Content\"";
 				DEVELOPMENT_TEAM = P3YWQG9C86;
 				ENABLE_PREVIEWS = YES;
