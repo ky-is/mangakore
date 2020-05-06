@@ -6,10 +6,14 @@ final class DefaultsSync: NSObject {
 	}
 
 	static func updateUserDefaultsFromCloud(notification: Notification) {
-		let cloudDictionary = NSUbiquitousKeyValueStore.default.dictionaryRepresentation
+		guard let newKeys = notification.userInfo?[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String] else {
+			return print("No new keys")
+		}
+		let cloudDefaults = NSUbiquitousKeyValueStore.default
 		let userDefaults = UserDefaults.standard
-		for (key, obj) in cloudDictionary {
-			userDefaults.set(obj, forKey: key)
+		for key in newKeys {
+			let newValue = cloudDefaults.object(forKey: key)
+			userDefaults.set(newValue, forKey: key)
 		}
 		userDefaults.synchronize()
 	}
