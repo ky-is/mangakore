@@ -31,11 +31,13 @@ private func getStatus(_ url: URL) -> CloudImageStatus {
 
 struct CloudImage: View {
 	let url: URL?
-	let size: CGFloat
+	let width: CGFloat
+	let height: CGFloat
+	let contentMode: ContentMode
 
 	@State private var status: CloudImageStatus
 
-	init(_ url: URL?, size: CGFloat) {
+	init(_ url: URL?, width: CGFloat, height: CGFloat, contentMode: ContentMode) {
 		let initialStatus: CloudImageStatus
 		if let url = url {
 			let inCloud = url.lastPathComponent.hasSuffix(".icloud")
@@ -52,7 +54,9 @@ struct CloudImage: View {
 			self.url = url
 			initialStatus = .error
 		}
-		self.size = size
+		self.width = width
+		self.height = height
+		self.contentMode = contentMode
 		self._status = State(initialValue: initialStatus)
 	}
 
@@ -61,17 +65,17 @@ struct CloudImage: View {
 			if status == .success {
 				Image(uiImage: UIImage(contentsOfFile: url!.path)!)
 					.resizable()
-					.aspectRatio(contentMode: .fill)
-					.frame(width: size, height: size)
+					.aspectRatio(contentMode: contentMode)
+					.frame(width: width, height: height)
 					.clipped()
 			} else if status == .loading {
-				LoadingCloudImage(status: status, size: size) { _ in
+				LoadingCloudImage(status: status, width: width, height: height) { _ in
 					if let url = self.url {
 						self.status = getStatus(url)
 					}
 				}
 			} else if status == .error {
-				InvalidCloudImage(status: status, size: size)
+				InvalidCloudImage(status: status, width: width, height: height)
 			}
 		}
 	}
@@ -79,24 +83,26 @@ struct CloudImage: View {
 
 private struct LoadingCloudImage: View {
 	let status: CloudImageStatus
-	let size: CGFloat
+	let width: CGFloat
+	let height: CGFloat
 	private let timer = Timer.publish(every: 0.1, on: RunLoop.main, in: .default).autoconnect()
 	let callback: (Any) -> Void
 
 	var body: some View {
-		InvalidCloudImage(status: status, size: size)
+		InvalidCloudImage(status: status, width: width, height: height)
 			.onReceive(timer, perform: callback)
 	}
 }
 
 private struct InvalidCloudImage: View {
 	let status: CloudImageStatus
-	let size: CGFloat
+	let width: CGFloat
+	let height: CGFloat
 
 	var body: some View {
 		Text(status == .error ? "✕" : "？")
 			.font(.largeTitle)
-			.frame(width: size, height: size)
+			.frame(width: width, height: height)
 			.background(Color.gray)
 	}
 }

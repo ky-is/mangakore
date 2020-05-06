@@ -37,7 +37,7 @@ private struct ReadingPage: View {
 		print(self.progress.volume, self.work.volumes.count, self.progress.page, images.count)
 		return GeometryReader { geometry in
 			ZStack {
-				CloudImage(images[self.progress.page - 1], size: geometry.size.width)
+				CloudImage(images[self.progress.page - 1], width: geometry.size.width, height: geometry.size.height, contentMode: .fit)
 					.onTapGesture {
 						self.showUI.toggle()
 					}
