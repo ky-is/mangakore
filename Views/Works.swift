@@ -21,8 +21,8 @@ private struct WorksList: View {
 
 private struct WorksEntry: View {
 	let work: Work
-	let progress: WorkProgress
 
+	@ObservedObject private var progress: WorkProgress
 	@State private var showOptions = false
 
 	init(work: Work) {
@@ -40,7 +40,7 @@ private struct WorksEntry: View {
 					HStack {
 						Text("\(progress.volume) / \(work.volumes.count)巻")
 						if progress.volume > 0 {
-							Text("・\(progress.page) / \(work.volumes[progress.volume].images.count)頁")
+							Text("・\(progress.page) / \(work.volumes[progress.volume - 1].images.count)頁")
 						}
 					}
 						.font(Font.subheadline.monospacedDigit())
@@ -64,7 +64,12 @@ private struct WorksEntry: View {
 			.padding(.trailing, -32)
 			.buttonStyle(BorderlessButtonStyle())
 			.actionSheet(isPresented: $showOptions) {
-				ActionSheet(title: Text(work.id), message: nil, buttons: [
+				ActionSheet(title: Text(work.id).font(.title), message: nil, buttons: [
+					.destructive(Text("Reset reading progress")) {
+						self.progress.volume = 0
+						self.progress.page = 0
+						self.progress.rating = 0
+					},
 					.default(Text("Cache local copy")) {
 						self.work.volumes.forEach { volume in
 							volume.images.forEach { url in

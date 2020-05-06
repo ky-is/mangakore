@@ -2,12 +2,22 @@ import SwiftUI
 
 struct Reading: View {
 	let work: Work
-	let progress: WorkProgress
+	@ObservedObject var progress: WorkProgress
 
 	var body: some View {
-		Text(work.id)
+		GeometryReader { geometry in
+			if self.progress.volume > 0 {
+				CloudImage(self.work.volumes[self.progress.volume - 1].images[self.progress.page - 1], size: geometry.size.width)
+			}
+		}
+			.edgesIgnoringSafeArea(.all)
 			.navigationBarTitle("")
 			.navigationBarHidden(true)
+			.onAppear {
+				if self.progress.volume < 1 {
+					self.progress.volume = 1
+				}
+			}
 	}
 }
 

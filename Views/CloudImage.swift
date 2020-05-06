@@ -35,7 +35,7 @@ struct CloudImage: View {
 	@State private var image: UIImage?
 	@State private var status: CloudImageStatus
 
-	init(_ url: URL?, size: CGFloat = 128) {
+	init(_ url: URL?, size: CGFloat) {
 		let initialStatus: CloudImageStatus
 		let image: UIImage?
 		if let url = url {
