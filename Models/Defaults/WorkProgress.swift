@@ -32,11 +32,19 @@ final class WorkProgress: ObservableObject {
 		}
 	}
 
+	@Published var magnification: Float {
+		didSet {
+			save(value: magnification)
+		}
+	}
+
 	init(_ work: Work) {
 		let id = work.id
 		self.id = id
-		volume = UserDefaults.standard.integer(forKey: getKey(for: id, named: "volume"))
-		page = UserDefaults.standard.integer(forKey: getKey(for: id, named: "page"))
-		rating = UserDefaults.standard.integer(forKey: getKey(for: id, named: "rating"))
+		self.volume = UserDefaults.standard.integer(forKey: getKey(for: id, named: "volume"))
+		self.page = UserDefaults.standard.integer(forKey: getKey(for: id, named: "page"))
+		self.rating = UserDefaults.standard.integer(forKey: getKey(for: id, named: "rating"))
+		let magnification = UserDefaults.standard.float(forKey: getKey(for: id, named: "magnification"))
+		self.magnification = magnification > 0 ? magnification : 1
 	}
 }

@@ -22,6 +22,7 @@
 		2482C41724623FE000A96EE5 /* WorkProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482C41624623FE000A96EE5 /* WorkProgress.swift */; };
 		2482C41A2462478500A96EE5 /* DefaultsSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482C4192462478500A96EE5 /* DefaultsSync.swift */; };
 		24C5E74A24626B0100D980F2 /* CloudImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C5E74924626B0100D980F2 /* CloudImage.swift */; };
+		24EB5589246365B300F8CB11 /* VisualEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24EB5588246365B300F8CB11 /* VisualEffect.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		2482C41624623FE000A96EE5 /* WorkProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkProgress.swift; sourceTree = "<group>"; };
 		2482C4192462478500A96EE5 /* DefaultsSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsSync.swift; sourceTree = "<group>"; };
 		24C5E74924626B0100D980F2 /* CloudImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudImage.swift; sourceTree = "<group>"; };
+		24EB5588246365B300F8CB11 /* VisualEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffect.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				24515B4F24635B3400C3D31A /* PinchToZoom.swift */,
+				24EB5588246365B300F8CB11 /* VisualEffect.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -232,6 +235,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				24C5E74A24626B0100D980F2 /* CloudImage.swift in Sources */,
+				24EB5589246365B300F8CB11 /* VisualEffect.swift in Sources */,
 				24440F3724633BEC008AA5AF /* WorkIcon.swift in Sources */,
 				24515B5024635B3400C3D31A /* PinchToZoom.swift in Sources */,
 				2441469E2461D8FE008EAFDA /* AppDelegate.swift in Sources */,
