@@ -3,6 +3,8 @@ import SwiftUI
 struct Reading: View {
 	let work: Work
 	@ObservedObject var progress: WorkProgress
+
+	@ObservedObject private var userSettings = UserSettings.shared
 	@State private var showUI = false
 
 	var body: some View {
@@ -15,6 +17,15 @@ struct Reading: View {
 		}
 			.edgesIgnoringSafeArea(.all)
 			.navigationBarTitle(Text(work.id), displayMode: .inline)
+			.navigationBarItems(trailing:
+				Button(action: {
+					self.userSettings.invertContent = !self.userSettings.invertContent
+				}) {
+					Text("☯")
+						.font(.system(size: 24))
+						.colorInvert(userSettings.invertContent)
+				}
+			)
 			.navigationBarHidden(!showUI)
 			.onAppear {
 				if self.progress.volume < 1 {
@@ -30,6 +41,7 @@ private struct ReadingPage: View {
 	@Binding var showUI: Bool
 
 	@Environment(\.presentationMode) private var presentationMode
+	@ObservedObject private var userSettings = UserSettings.shared
 
 	private let advancePageWidth: CGFloat = 44
 
@@ -38,6 +50,7 @@ private struct ReadingPage: View {
 		return GeometryReader { geometry in
 			ZStack {
 				CloudImage(images[self.progress.page - 1], width: geometry.size.width, height: geometry.size.height, contentMode: .fit)
+					.colorInvert(self.userSettings.invertContent)
 					.scaleEffect(CGFloat(self.progress.magnification))
 					.modifier(PinchToZoom())
 					.onTapGesture {
