@@ -18,6 +18,8 @@
 		244146BD2461F8FB008EAFDA /* Works.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244146BC2461F8FB008EAFDA /* Works.swift */; };
 		2482C41724623FE000A96EE5 /* WorkProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482C41624623FE000A96EE5 /* WorkProgress.swift */; };
 		2482C41A2462478500A96EE5 /* DefaultsSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482C4192462478500A96EE5 /* DefaultsSync.swift */; };
+		24C5E74824624D7700D980F2 /* Reading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C5E74724624D7700D980F2 /* Reading.swift */; };
+		24C5E74A24626B0100D980F2 /* CloudImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C5E74924626B0100D980F2 /* CloudImage.swift */; };
 		24DCCF962461FFB0004E8A9E /* WorkIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24DCCF952461FFB0004E8A9E /* WorkIcon.swift */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +38,8 @@
 		244146BC2461F8FB008EAFDA /* Works.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Works.swift; sourceTree = "<group>"; };
 		2482C41624623FE000A96EE5 /* WorkProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkProgress.swift; sourceTree = "<group>"; };
 		2482C4192462478500A96EE5 /* DefaultsSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsSync.swift; sourceTree = "<group>"; };
+		24C5E74724624D7700D980F2 /* Reading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reading.swift; sourceTree = "<group>"; };
+		24C5E74924626B0100D980F2 /* CloudImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudImage.swift; sourceTree = "<group>"; };
 		24DCCF952461FFB0004E8A9E /* WorkIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkIcon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -96,6 +100,8 @@
 			children = (
 				244146BC2461F8FB008EAFDA /* Works.swift */,
 				24DCCF952461FFB0004E8A9E /* WorkIcon.swift */,
+				24C5E74724624D7700D980F2 /* Reading.swift */,
+				24C5E74924626B0100D980F2 /* CloudImage.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -198,6 +204,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24C5E74A24626B0100D980F2 /* CloudImage.swift in Sources */,
 				2441469E2461D8FE008EAFDA /* AppDelegate.swift in Sources */,
 				244146BD2461F8FB008EAFDA /* Works.swift in Sources */,
 				244146A02461D8FE008EAFDA /* SceneDelegate.swift in Sources */,
@@ -206,6 +213,7 @@
 				2482C41A2462478500A96EE5 /* DefaultsSync.swift in Sources */,
 				24DCCF962461FFB0004E8A9E /* WorkIcon.swift in Sources */,
 				244146B92461E0A0008EAFDA /* CloudContainer.swift in Sources */,
+				24C5E74824624D7700D980F2 /* Reading.swift in Sources */,
 				2482C41724623FE000A96EE5 /* WorkProgress.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

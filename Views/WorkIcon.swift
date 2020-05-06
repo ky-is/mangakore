@@ -1,33 +1,16 @@
 import SwiftUI
 
 struct WorkIcon: View {
-	let image: UIImage?
+	let url: URL?
 	let size: CGFloat
 
 	init(_ work: Work, size: CGFloat = 128) {
-		if let path = work.icon?.path {
-			image = UIImage(contentsOfFile: path)
-		} else {
-			image = nil
-		}
+		self.url = work.icon
 		self.size = size
 	}
 
 	var body: some View {
-		Group {
-			if image != nil {
-				Image(uiImage: image!)
-					.resizable()
-					.aspectRatio(contentMode: .fill)
-					.frame(width: size, height: size)
-					.clipped()
-			} else {
-				Text("?")
-					.font(.largeTitle)
-					.frame(width: size, height: size)
-					.background(Color.gray)
-			}
-		}
+		CloudImage(url, size: size)
 	}
 }
 
