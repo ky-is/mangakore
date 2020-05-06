@@ -16,6 +16,7 @@
 		244146B92461E0A0008EAFDA /* CloudContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244146B82461E0A0008EAFDA /* CloudContainer.swift */; };
 		244146BB2461EB1D008EAFDA /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244146BA2461EB1D008EAFDA /* DataModel.swift */; };
 		244146BD2461F8FB008EAFDA /* Works.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244146BC2461F8FB008EAFDA /* Works.swift */; };
+		2482C41724623FE000A96EE5 /* WorkProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482C41624623FE000A96EE5 /* WorkProgress.swift */; };
 		24DCCF962461FFB0004E8A9E /* WorkIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24DCCF952461FFB0004E8A9E /* WorkIcon.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,6 +33,7 @@
 		244146B82461E0A0008EAFDA /* CloudContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudContainer.swift; sourceTree = "<group>"; };
 		244146BA2461EB1D008EAFDA /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		244146BC2461F8FB008EAFDA /* Works.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Works.swift; sourceTree = "<group>"; };
+		2482C41624623FE000A96EE5 /* WorkProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkProgress.swift; sourceTree = "<group>"; };
 		24DCCF952461FFB0004E8A9E /* WorkIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkIcon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -101,6 +103,7 @@
 			children = (
 				244146B82461E0A0008EAFDA /* CloudContainer.swift */,
 				244146BA2461EB1D008EAFDA /* DataModel.swift */,
+				2482C41624623FE000A96EE5 /* WorkProgress.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -183,6 +186,7 @@
 				244146A22461D8FE008EAFDA /* ContentView.swift in Sources */,
 				24DCCF962461FFB0004E8A9E /* WorkIcon.swift in Sources */,
 				244146B92461E0A0008EAFDA /* CloudContainer.swift in Sources */,
+				2482C41724623FE000A96EE5 /* WorkProgress.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
