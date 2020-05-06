@@ -1,8 +1,10 @@
 import Foundation
 
 struct CloudContainer {
-	static let url: URL = {
-		let url = FileManager.default.url(forUbiquityContainerIdentifier: nil)!.appendingPathComponent("Documents")
+	static let url: URL? = {
+		guard let url = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") else {
+			return nil
+		}
 		if !FileManager.default.fileExists(atPath: url.path) {
 			do {
 				try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
@@ -14,7 +16,10 @@ struct CloudContainer {
 		return url
 	}()
 
-	static var contents: [URL] {
+	static var contents: [URL]? {
+		guard let url = url else {
+			return nil
+		}
 		do {
 			return try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: [.isDirectoryKey], options: [.producesRelativePathURLs, .skipsHiddenFiles])
 		} catch {

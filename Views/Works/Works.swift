@@ -13,8 +13,21 @@ private struct WorksList: View {
 	@EnvironmentObject var dataModel: DataModel
 
 	var body: some View {
-		List(dataModel.works) {
-			WorksEntry(work: $0)
+		Group {
+			if dataModel.works != nil {
+				List(dataModel.works!) {
+					WorksEntry(work: $0)
+				}
+			} else {
+				VStack {
+					Text("iCloud Unavailable")
+						.font(.title)
+						.padding(.bottom)
+					Text("manga kore requires iCloud to store and manage your library. Please enable it in settings and try again.")
+						.font(.subheadline)
+				}
+					.padding(.horizontal)
+			}
 		}
 	}
 }

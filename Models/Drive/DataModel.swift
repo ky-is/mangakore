@@ -62,9 +62,9 @@ struct Work: Identifiable {
 final class DataModel: ObservableObject {
 	static let shared = DataModel()
 
-	@Published var works: [Work] = []
+	@Published var works: [Work]? = []
 
 	func update() {
-		works = CloudContainer.contents.compactMap { Work($0) }
+		works = CloudContainer.contents?.compactMap { Work($0) }
 	}
 }
