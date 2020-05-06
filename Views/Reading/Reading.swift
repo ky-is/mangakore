@@ -38,6 +38,7 @@ private struct ReadingPage: View {
 		return GeometryReader { geometry in
 			ZStack {
 				CloudImage(images[self.progress.page - 1], width: geometry.size.width, height: geometry.size.height, contentMode: .fit)
+					.modifier(PinchToZoom())
 					.onTapGesture {
 						self.showUI.toggle()
 					}

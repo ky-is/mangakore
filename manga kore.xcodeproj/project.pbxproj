@@ -18,6 +18,7 @@
 		24440F3724633BEC008AA5AF /* WorkIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3424633BEC008AA5AF /* WorkIcon.swift */; };
 		24440F3824633BEC008AA5AF /* Works.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3524633BEC008AA5AF /* Works.swift */; };
 		24440F3924633BEC008AA5AF /* Reading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3624633BEC008AA5AF /* Reading.swift */; };
+		24515B5024635B3400C3D31A /* PinchToZoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24515B4F24635B3400C3D31A /* PinchToZoom.swift */; };
 		2482C41724623FE000A96EE5 /* WorkProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482C41624623FE000A96EE5 /* WorkProgress.swift */; };
 		2482C41A2462478500A96EE5 /* DefaultsSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482C4192462478500A96EE5 /* DefaultsSync.swift */; };
 		24C5E74A24626B0100D980F2 /* CloudImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C5E74924626B0100D980F2 /* CloudImage.swift */; };
@@ -38,6 +39,7 @@
 		24440F3424633BEC008AA5AF /* WorkIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkIcon.swift; sourceTree = "<group>"; };
 		24440F3524633BEC008AA5AF /* Works.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Works.swift; sourceTree = "<group>"; };
 		24440F3624633BEC008AA5AF /* Reading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reading.swift; sourceTree = "<group>"; };
+		24515B4F24635B3400C3D31A /* PinchToZoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchToZoom.swift; sourceTree = "<group>"; };
 		2482C41624623FE000A96EE5 /* WorkProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkProgress.swift; sourceTree = "<group>"; };
 		2482C4192462478500A96EE5 /* DefaultsSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsSync.swift; sourceTree = "<group>"; };
 		24C5E74924626B0100D980F2 /* CloudImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudImage.swift; sourceTree = "<group>"; };
@@ -58,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				244146B72461E08F008EAFDA /* Models */,
+				24515B512463608800C3D31A /* Modifiers */,
 				244146B52461DD50008EAFDA /* Views */,
 				2441469C2461D8FE008EAFDA /* iOS */,
 				2441469B2461D8FE008EAFDA /* Products */,
@@ -112,6 +115,14 @@
 				2482C41B24624AC200A96EE5 /* Drive */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		24515B512463608800C3D31A /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				24515B4F24635B3400C3D31A /* PinchToZoom.swift */,
+			);
+			path = Modifiers;
 			sourceTree = "<group>";
 		};
 		2482C4182462476B00A96EE5 /* Defaults */ = {
@@ -222,6 +233,7 @@
 			files = (
 				24C5E74A24626B0100D980F2 /* CloudImage.swift in Sources */,
 				24440F3724633BEC008AA5AF /* WorkIcon.swift in Sources */,
+				24515B5024635B3400C3D31A /* PinchToZoom.swift in Sources */,
 				2441469E2461D8FE008EAFDA /* AppDelegate.swift in Sources */,
 				244146A02461D8FE008EAFDA /* SceneDelegate.swift in Sources */,
 				24440F3824633BEC008AA5AF /* Works.swift in Sources */,
