@@ -6,10 +6,10 @@ private func getKey(for id: String, named: String) -> String {
 }
 
 final class WorkProgress: ObservableObject {
-	private let id: String
+	private let work: Work
 
 	private func save(value: Any?, name: String = #function) {
-		let key = getKey(for: id, named: name)
+		let key = getKey(for: work.id, named: name)
 		UserDefaults.standard.set(value, forKey: key)
 		NSUbiquitousKeyValueStore.default.set(value, forKey: key)
 	}
@@ -18,6 +18,7 @@ final class WorkProgress: ObservableObject {
 		didSet {
 			save(value: volume)
 			page = 1
+			work.volumes[safe: oldValue]?.cache(false)
 		}
 	}
 	@Published var page: Int {
@@ -40,7 +41,7 @@ final class WorkProgress: ObservableObject {
 
 	init(_ work: Work) {
 		let id = work.id
-		self.id = id
+		self.work = work
 		self.volume = UserDefaults.standard.integer(forKey: getKey(for: id, named: "volume"))
 		self.page = UserDefaults.standard.integer(forKey: getKey(for: id, named: "page"))
 		self.rating = UserDefaults.standard.integer(forKey: getKey(for: id, named: "rating"))

@@ -43,7 +43,6 @@ private struct ReadingPage: View {
 	@Binding var showUI: Bool
 
 	@Environment(\.presentationMode) private var presentationMode
-	@ObservedObject private var userSettings = UserSettings.shared
 
 	private let advancePageWidth: CGFloat = 44
 
@@ -58,10 +57,7 @@ private struct ReadingPage: View {
 							Text("Please check the folder in iCloud and try again.")
 						}
 					} else {
-						CloudImage(images[self.progress.page - 1], width: geometry.size.width, height: geometry.size.height, contentMode: .fit)
-							.colorInvert(self.userSettings.invertContent)
-							.scaleEffect(CGFloat(self.progress.magnification))
-							.modifier(PinchToZoom())
+						PageImage(pages: images, progress: self.progress, geometry: geometry)
 					}
 				}
 					.onTapGesture {
@@ -94,6 +90,30 @@ private struct ReadingPage: View {
 				}
 			}
 		}
+	}
+}
+
+struct PageImage: View {
+	let page: URL
+	let progress: WorkProgress
+	let geometry: GeometryProxy
+
+	@ObservedObject private var userSettings = UserSettings.shared
+
+	init(pages: [URL], progress: WorkProgress, geometry: GeometryProxy) {
+		self.page = pages[progress.page - 1]
+		self.progress = progress
+		self.geometry = geometry
+
+		self.page.cache(true)
+		pages[safe: progress.page]?.cache(true)
+	}
+
+	var body: some View {
+		CloudImage(page, width: geometry.size.width, height: geometry.size.height, contentMode: .fit)
+			.colorInvert(userSettings.invertContent)
+			.scaleEffect(CGFloat(progress.magnification))
+			.modifier(PinchToZoom())
 	}
 }
 

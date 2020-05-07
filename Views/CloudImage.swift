@@ -19,8 +19,7 @@ private func getStatus(of url: URL?) -> CloudImageStatus {
 				}
 			case .notDownloaded:
 				if resources.ubiquitousItemDownloadRequested == false {
-					print(url.lastPathComponent, CFAbsoluteTimeGetCurrent())
-					try? FileManager.default.startDownloadingUbiquitousItem(at: url)
+					url.cache(true)
 				}
 			default:
 				break
@@ -45,7 +44,6 @@ struct CloudImage: View {
 		if let url = url, url.lastPathComponent.hasSuffix(".icloud") {
 			let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(7))
 			self.url = url.deletingLastPathComponent().appendingPathComponent(imageFileName)
-			try? FileManager.default.startDownloadingUbiquitousItem(at: url)
 		} else {
 			self.url = url
 		}

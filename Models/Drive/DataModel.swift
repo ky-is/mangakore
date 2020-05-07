@@ -1,11 +1,13 @@
 import SwiftUI
 
 struct Volume {
+	let root: URL
 	let images: [URL]
 
-	init(_ urls: [URL]) {
+	init(_ root: URL, urls: [URL]) {
+		self.root = root
 		let imageExtensions = [".png", ".jpg", ".jpeg"]
-		images = urls
+		self.images = urls
 			.filter { url in
 				return imageExtensions.contains { url.lastPathComponent.contains($0) }
 			}
@@ -21,15 +23,20 @@ struct Volume {
 				return aName.compare(bName) == .orderedAscending
 			}
 	}
+
+	func cache(_ enable: Bool) {
+		root.cache(enable)
+	}
 }
 
 struct Work: Identifiable {
 	let id: String
+	let root: URL
 	let icon: URL?
 	let volumes: [Volume]
 
-	init?(_ url: URL) {
-		guard let contents = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
+	init?(_ root: URL) {
+		guard let contents = try? FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
 			return nil
 		}
 		let childDirectories = contents.filter { url in
@@ -40,7 +47,7 @@ struct Work: Identifiable {
 		}
 		let volumes: [Volume?]
 		if childDirectories.isEmpty {
-			volumes = [Volume(contents)]
+			volumes = [Volume(root, urls: contents)]
 		} else {
 			volumes = childDirectories
 				.sorted { a, b in a.lastPathComponent.compare(b.lastPathComponent) == .orderedAscending }
@@ -48,16 +55,18 @@ struct Work: Identifiable {
 					guard let children = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil) else {
 						return nil
 					}
-					return Volume(children)
+					return Volume(url, urls: children)
 				}
 		}
-		self.id = url.lastPathComponent
+		self.id = root.lastPathComponent
+		self.root = root
 		self.volumes = volumes.compactMap { $0 }
 		self.icon = self.volumes.first?.images.first
-		if let icon = self.icon {
-			try? FileManager.default.startDownloadingUbiquitousItem(at: icon)
-//			try? FileManager.default.evictUbiquitousItem(at: icon) //SAMPLE
-		}
+		self.icon?.cache(true) //SAMPLE false
+	}
+
+	func cache(_ enable: Bool) {
+		root.cache(enable)
 	}
 }
 

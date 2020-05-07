@@ -20,6 +20,7 @@
 		24440F3924633BEC008AA5AF /* Reading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3624633BEC008AA5AF /* Reading.swift */; };
 		24515B5024635B3400C3D31A /* PinchToZoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24515B4F24635B3400C3D31A /* PinchToZoom.swift */; };
 		248027D124637A170004230F /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 248027D024637A170004230F /* UserSettings.swift */; };
+		248027D3246482000004230F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 248027D2246482000004230F /* Extensions.swift */; };
 		2482C41724623FE000A96EE5 /* WorkProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482C41624623FE000A96EE5 /* WorkProgress.swift */; };
 		2482C41A2462478500A96EE5 /* DefaultsSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482C4192462478500A96EE5 /* DefaultsSync.swift */; };
 		24C5E74A24626B0100D980F2 /* CloudImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C5E74924626B0100D980F2 /* CloudImage.swift */; };
@@ -44,6 +45,7 @@
 		24440F3624633BEC008AA5AF /* Reading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reading.swift; sourceTree = "<group>"; };
 		24515B4F24635B3400C3D31A /* PinchToZoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchToZoom.swift; sourceTree = "<group>"; };
 		248027D024637A170004230F /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		248027D2246482000004230F /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		2482C41624623FE000A96EE5 /* WorkProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkProgress.swift; sourceTree = "<group>"; };
 		2482C4192462478500A96EE5 /* DefaultsSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsSync.swift; sourceTree = "<group>"; };
 		24C5E74924626B0100D980F2 /* CloudImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudImage.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				24515B4F24635B3400C3D31A /* PinchToZoom.swift */,
 				24EB5588246365B300F8CB11 /* VisualEffect.swift */,
 				24EB558A24636F5A00F8CB11 /* ViewExtensions.swift */,
+				248027D2246482000004230F /* Extensions.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -251,6 +254,7 @@
 				24EB558B24636F5A00F8CB11 /* ViewExtensions.swift in Sources */,
 				244146A22461D8FE008EAFDA /* ContentView.swift in Sources */,
 				24440F3924633BEC008AA5AF /* Reading.swift in Sources */,
+				248027D3246482000004230F /* Extensions.swift in Sources */,
 				2482C41A2462478500A96EE5 /* DefaultsSync.swift in Sources */,
 				244146B92461E0A0008EAFDA /* CloudContainer.swift in Sources */,
 				248027D124637A170004230F /* UserSettings.swift in Sources */,

@@ -85,18 +85,10 @@ private struct WorksEntry: View {
 						self.progress.rating = 0
 					},
 					.default(Text("Cache local copy")) {
-						self.work.volumes.forEach { volume in
-							volume.images.forEach { url in
-								try? FileManager.default.startDownloadingUbiquitousItem(at: url)
-							}
-						}
+						self.work.cache(true)
 					},
 					.destructive(Text("Remove local copy")) {
-						self.work.volumes.forEach { volume in
-							volume.images.forEach { url in
-								try? FileManager.default.evictUbiquitousItem(at: url)
-							}
-						}
+						self.work.cache(false)
 					},
 					.cancel(),
 				])
