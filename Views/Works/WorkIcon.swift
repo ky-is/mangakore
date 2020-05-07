@@ -11,6 +11,7 @@ struct WorkIcon: View {
 
 	var body: some View {
 		CloudImage(url, width: size, height: size, contentMode: .fill)
+			.background(Color.gray)
 	}
 }
 

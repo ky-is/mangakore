@@ -100,10 +100,9 @@ private struct InvalidCloudImage: View {
 	let height: CGFloat
 
 	var body: some View {
-		Text(status == .error ? "✕" : "？")
+		Text(status == .error ? "✕" : "⋯")
 			.font(.largeTitle)
 			.frame(width: width, height: height)
-			.background(Color.gray)
 	}
 }
 
