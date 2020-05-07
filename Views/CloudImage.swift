@@ -5,9 +5,12 @@ private enum CloudImageStatus {
 	case loading, success, error
 }
 
-private func getStatus(_ url: URL) -> CloudImageStatus {
+private func getStatus(of url: URL?) -> CloudImageStatus {
+	guard let url = url else {
+		return .error
+	}
 	do {
-		let resources = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey, .ubiquitousItemDownloadingErrorKey, .ubiquitousItemIsDownloadingKey, .ubiquitousItemDownloadRequestedKey])
+		let resources = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey, .ubiquitousItemIsDownloadingKey, .ubiquitousItemDownloadRequestedKey])
 		if let status = resources.ubiquitousItemDownloadingStatus {
 			switch status {
 			case .current:
@@ -16,6 +19,7 @@ private func getStatus(_ url: URL) -> CloudImageStatus {
 				}
 			case .notDownloaded:
 				if resources.ubiquitousItemDownloadRequested == false {
+					print(url.lastPathComponent, CFAbsoluteTimeGetCurrent())
 					try? FileManager.default.startDownloadingUbiquitousItem(at: url)
 				}
 			default:
@@ -23,7 +27,7 @@ private func getStatus(_ url: URL) -> CloudImageStatus {
 			}
 		}
 	} catch {
-		print("resourceValues", error.localizedDescription)
+		print("getStatus", error.localizedDescription)
 		return .error
 	}
 	return .loading
@@ -35,33 +39,27 @@ struct CloudImage: View {
 	let height: CGFloat
 	let contentMode: ContentMode
 
-	@State private var status: CloudImageStatus
+	@State private var status: CloudImageStatus = .loading
 
 	init(_ url: URL?, width: CGFloat, height: CGFloat, contentMode: ContentMode) {
-		let initialStatus: CloudImageStatus
-		if let url = url {
-			let inCloud = url.lastPathComponent.hasSuffix(".icloud")
-			if inCloud {
-				let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(7))
-				self.url = url.deletingLastPathComponent().appendingPathComponent(imageFileName)
-				initialStatus = .loading
-				try? FileManager.default.startDownloadingUbiquitousItem(at: url)
-			} else {
-				self.url = url
-				initialStatus = getStatus(url)
-			}
+		if let url = url, url.lastPathComponent.hasSuffix(".icloud") {
+			let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(7))
+			self.url = url.deletingLastPathComponent().appendingPathComponent(imageFileName)
+			try? FileManager.default.startDownloadingUbiquitousItem(at: url)
 		} else {
 			self.url = url
-			initialStatus = .error
 		}
 		self.width = width
 		self.height = height
 		self.contentMode = contentMode
-		self._status = State(initialValue: initialStatus)
 	}
 
 	var body: some View {
-		Group {
+		let status = getStatus(of: url)
+		if status != self.status { //TODO investigate why this happens
+//			print("Mismatch", status, self.status)
+		}
+		return Group {
 			if status == .success {
 				Image(uiImage: UIImage(contentsOfFile: url!.path)!)
 					.resizable()
@@ -70,9 +68,7 @@ struct CloudImage: View {
 					.clipped()
 			} else if status == .loading {
 				LoadingCloudImage(status: status, width: width, height: height) { _ in
-					if let url = self.url {
-						self.status = getStatus(url)
-					}
+					self.status = getStatus(of: self.url)
 				}
 			} else if status == .error {
 				InvalidCloudImage(status: status, width: width, height: height)
