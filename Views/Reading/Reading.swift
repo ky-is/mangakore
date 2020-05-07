@@ -9,7 +9,9 @@ struct Reading: View {
 
 	var body: some View {
 		Group {
-			if progress.volume > 0 {
+			if work.volumes.isEmpty {
+				Text("Invalid folder layout")
+			} else if progress.volume > 0 {
 				ReadingPage(work: work, progress: progress, showUI: $showUI)
 			} else {
 				EmptyView()
@@ -49,10 +51,19 @@ private struct ReadingPage: View {
 		let images = work.volumes[progress.volume - 1].images
 		return GeometryReader { geometry in
 			ZStack {
-				CloudImage(images[self.progress.page - 1], width: geometry.size.width, height: geometry.size.height, contentMode: .fit)
-					.colorInvert(self.userSettings.invertContent)
-					.scaleEffect(CGFloat(self.progress.magnification))
-					.modifier(PinchToZoom())
+				Group {
+					if images.isEmpty {
+						VStack {
+							Text("No pages in this volume")
+							Text("Please check the folder in iCloud and try again.")
+						}
+					} else {
+						CloudImage(images[self.progress.page - 1], width: geometry.size.width, height: geometry.size.height, contentMode: .fit)
+							.colorInvert(self.userSettings.invertContent)
+							.scaleEffect(CGFloat(self.progress.magnification))
+							.modifier(PinchToZoom())
+					}
+				}
 					.onTapGesture {
 						self.showUI.toggle()
 					}

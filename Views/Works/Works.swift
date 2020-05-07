@@ -21,10 +21,10 @@ private struct WorksList: View {
 				}
 			} else {
 				VStack {
-					Text("iCloud Unavailable")
+					Text("iCloud Drive Unavailable")
 						.font(.title)
 						.padding(.bottom)
-					Text("manga kore requires iCloud to store and manage your library. Please enable it in settings and try again.")
+					Text("manga kore requires iCloud Drive to store and manage your library. Please enable it in settings and try again.")
 						.font(.subheadline)
 				}
 					.padding(.horizontal)
