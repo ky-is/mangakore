@@ -6,6 +6,7 @@ struct Works: View {
 			WorksList()
 				.navigationBarTitle("漫画")
 		}
+			.navigationViewStyle(StackNavigationViewStyle())
 	}
 }
 
@@ -64,10 +65,10 @@ private struct WorksEntry: View {
 				}) {
 					Text("⋯")
 						.bold()
-						.frame(width: 32, height: 32)
+						.frame(width: 28, height: 28)
 						.background(
 							Circle()
-								.fill(Color.gray)
+								.fill(Color.gray.opacity(0.5))
 						)
 						.padding()
 				}
@@ -100,6 +101,7 @@ private struct WorksEntry: View {
 					.cancel(),
 				])
 			}
+			.accentColor(.primary)
 	}
 }
 
