@@ -42,7 +42,7 @@ struct CloudImage: View {
 		if let url = url {
 			let inCloud = url.lastPathComponent.hasSuffix(".icloud")
 			if inCloud {
-				let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(6))
+				let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(7))
 				self.url = url.deletingLastPathComponent().appendingPathComponent(imageFileName)
 				initialStatus = .loading
 				try? FileManager.default.startDownloadingUbiquitousItem(at: url)
