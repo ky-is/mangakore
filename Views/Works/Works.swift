@@ -52,9 +52,19 @@ private struct WorksEntry: View {
 					Text(work.name)
 						.font(.headline)
 					HStack {
-						Text("\(progress.volume) / \(work.volumes.count)巻")
-						if progress.volume > 0 {
-							Text("・\(progress.page) / \(work.volumes[progress.volume - 1].images.count)頁")
+						Text(progress.volume.description)
+						+
+						Text("/\(work.volumes.count)")
+							.foregroundColor(.secondary)
+						+
+						Text("巻")
+						if progress.volume > 0 && progress.page > 0 {
+							Text(" \(progress.page)")
+							+
+							Text("/\(work.volumes[progress.volume - 1].images.count)")
+								.foregroundColor(.secondary)
+							+
+							Text("頁")
 						}
 					}
 						.font(Font.subheadline.monospacedDigit())
