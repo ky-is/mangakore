@@ -42,12 +42,14 @@ struct Work: Identifiable {
 		if childDirectories.isEmpty {
 			volumes = [Volume(contents)]
 		} else {
-			volumes = childDirectories.compactMap { url in
-				guard let children = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil) else {
-					return nil
+			volumes = childDirectories
+				.sorted { a, b in a.lastPathComponent.compare(b.lastPathComponent) == .orderedAscending }
+				.compactMap { url in
+					guard let children = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil) else {
+						return nil
+					}
+					return Volume(children)
 				}
-				return Volume(children)
-			}
 		}
 		self.id = url.lastPathComponent
 		self.volumes = volumes.compactMap { $0 }
