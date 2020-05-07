@@ -18,7 +18,7 @@ struct Reading: View {
 			}
 		}
 			.edgesIgnoringSafeArea(.all)
-			.navigationBarTitle(Text(work.id), displayMode: .inline)
+			.navigationBarTitle(Text(work.name), displayMode: .inline)
 			.navigationBarItems(trailing:
 				Button(action: {
 					self.userSettings.invertContent = !self.userSettings.invertContent

@@ -49,7 +49,7 @@ private struct WorksEntry: View {
 			HStack {
 				WorkIcon(work)
 				VStack(alignment: .leading) {
-					Text(work.id)
+					Text(work.name)
 						.font(.headline)
 					HStack {
 						Text("\(progress.volume) / \(work.volumes.count)巻")
@@ -78,7 +78,7 @@ private struct WorksEntry: View {
 			.padding(.trailing, -32)
 			.buttonStyle(BorderlessButtonStyle())
 			.actionSheet(isPresented: $showOptions) {
-				ActionSheet(title: Text(work.id).font(.title), message: nil, buttons: [
+				ActionSheet(title: Text(work.name).font(.title), message: nil, buttons: [
 					.destructive(Text("Reset reading progress")) {
 						self.progress.volume = 0
 						self.progress.page = 0

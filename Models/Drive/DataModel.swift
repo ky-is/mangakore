@@ -31,6 +31,7 @@ struct Volume {
 
 struct Work: Identifiable {
 	let id: String
+	let name: String
 	let root: URL
 	let icon: URL?
 	let volumes: [Volume]
@@ -58,7 +59,8 @@ struct Work: Identifiable {
 					return Volume(url, urls: children)
 				}
 		}
-		self.id = root.lastPathComponent
+		self.id = root.lastPathComponent.lowercased().filter { !$0.isWhitespace }
+		self.name = root.lastPathComponent
 		self.root = root
 		self.volumes = volumes.compactMap { $0 }
 		self.icon = self.volumes.first?.images.first
