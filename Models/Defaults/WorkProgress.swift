@@ -48,4 +48,8 @@ final class WorkProgress: ObservableObject {
 		let magnification = UserDefaults.standard.float(forKey: getKey(for: id, named: "magnification"))
 		self.magnification = magnification > 0 ? magnification : 1
 	}
+
+	var currentVolume: Volume {
+		work.volumes[volume - 1]
+	}
 }

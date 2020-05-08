@@ -24,6 +24,10 @@ struct Volume {
 			}
 	}
 
+	var pageCount: Int {
+		images.count
+	}
+
 	func cache(_ enable: Bool) {
 		root.cache(enable)
 	}

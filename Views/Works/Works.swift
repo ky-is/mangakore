@@ -64,7 +64,7 @@ private struct WorksEntry: View {
 						if progress.volume > 0 && progress.page > 0 {
 							Text(" \(progress.page)")
 							+
-							Text("/\(work.volumes[progress.volume - 1].images.count)")
+							Text("/\(progress.currentVolume.pageCount)")
 								.foregroundColor(.secondary)
 							+
 							Text("頁")

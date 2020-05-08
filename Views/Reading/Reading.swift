@@ -50,17 +50,17 @@ private struct ReadingPage: View {
 	private let advancePageWidth: CGFloat = 44
 
 	var body: some View {
-		let images = work.volumes[progress.volume - 1].images
+		let pages = progress.currentVolume.images
 		return GeometryReader { geometry in
 			ZStack {
 				Group {
-					if images.isEmpty {
+					if pages.isEmpty {
 						VStack {
 							Text("No pages in this volume")
 							Text("Please check the folder in iCloud and try again.")
 						}
 					} else {
-						PageImage(pages: images, progress: self.progress, geometry: geometry)
+						PageImage(pages: pages, progress: self.progress, geometry: geometry)
 					}
 				}
 					.onTapGesture {
@@ -68,31 +68,7 @@ private struct ReadingPage: View {
 							self.userSettings.showUI.toggle()
 						}
 					}
-				Group {
-					ReadingPageToggle {
-						if self.progress.page < images.count {
-							self.progress.page = self.progress.page + 1
-						} else if self.progress.volume < self.work.volumes.count {
-							self.progress.volume = self.progress.volume + 1
-						} else {
-							self.presentationMode.wrappedValue.dismiss()
-						}
-					}
-						.frame(width: self.advancePageWidth, height: geometry.size.height)
-						.position(x: 0 + self.advancePageWidth / 2, y: geometry.size.height / 2)
-					ReadingPageToggle {
-						if self.progress.page > 1 {
-							self.progress.page = self.progress.page - 1
-						} else if self.progress.volume > 1 {
-							self.progress.volume = self.progress.volume - 1
-						}
-					}
-						.frame(width: self.advancePageWidth, height: geometry.size.height)
-						.position(x: geometry.size.width - self.advancePageWidth / 2, y: geometry.size.height / 2)
-				}
-				if self.userSettings.showUI {
-					ReadingBar(geometry: geometry, progress: self.progress)
-				}
+				ReadingUI(geometry: geometry, work: self.work, progress: self.progress)
 			}
 		}
 	}
@@ -120,57 +96,6 @@ struct PageImage: View {
 			.colorInvert(userSettings.invertContent)
 			.scaleEffect(CGFloat(progress.magnification))
 			.modifier(PinchToZoom())
-	}
-}
-
-private struct ReadingBar: View {
-	let geometry: GeometryProxy
-	@ObservedObject var progress: WorkProgress
-
-	@Environment(\.presentationMode) private var presentationMode
-
-	var body: some View {
-		VStack(spacing: 0) {
-			Divider()
-			HStack {
-				Spacer()
-				HStack {
-					Button(action: {
-						self.progress.magnification = max(1, self.progress.magnification - 0.025)
-					}) {
-						Text("⊖")
-							.font(Font.system(size: 28).weight(.light))
-							.frame(width: 44)
-					}
-						.disabled(progress.magnification <= 1)
-					Button(action: {
-						self.progress.magnification = self.progress.magnification + 0.025
-					}) {
-						Text("⊕")
-							.font(Font.system(size: 28).weight(.light))
-							.frame(width: 44)
-					}
-						.disabled(progress.magnification > 1.5)
-				}
-			}
-				.frame(height: 44)
-				.padding(.horizontal)
-				.padding(.bottom, geometry.safeAreaInsets.bottom)
-		}
-			.transition(.opacity)
-			.background(BlurEffect(style: .systemChromeMaterial))
-			.position(x: geometry.size.width / 2, y: geometry.size.height - (44 + geometry.safeAreaInsets.bottom) / 2)
-	}
-}
-
-private struct ReadingPageToggle: View {
-	let callback: () -> Void
-
-	var body: some View {
-		Rectangle()
-			.fill(Color.clear) //TODO messes with ReadingBar blur
-			.contentShape(Rectangle())
-			.onTapGesture(perform: callback)
 	}
 }
 
