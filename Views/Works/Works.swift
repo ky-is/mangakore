@@ -1,12 +1,15 @@
 import SwiftUI
 
 struct Works: View {
+	@ObservedObject private var userSettings = UserSettings.shared
+
 	var body: some View {
 		NavigationView {
 			WorksList()
 				.navigationBarTitle("漫画")
 		}
 			.navigationViewStyle(StackNavigationViewStyle())
+			.statusBar(hidden: !userSettings.showUI)
 	}
 }
 

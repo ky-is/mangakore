@@ -5,14 +5,13 @@ struct Reading: View {
 	@ObservedObject var progress: WorkProgress
 
 	@ObservedObject private var userSettings = UserSettings.shared
-	@State private var showUI = false
 
 	var body: some View {
 		Group {
 			if work.volumes.isEmpty {
 				Text("Invalid folder layout")
 			} else if progress.volume > 0 {
-				ReadingPage(work: work, progress: progress, showUI: $showUI)
+				ReadingPage(work: work, progress: progress)
 			} else {
 				EmptyView()
 			}
@@ -28,11 +27,15 @@ struct Reading: View {
 						.colorInvert(userSettings.invertContent)
 				}
 			)
-			.navigationBarHidden(!showUI)
+			.navigationBarHidden(!userSettings.showUI)
 			.onAppear {
+				self.userSettings.showUI = false
 				if self.progress.volume < 1 {
 					self.progress.volume = 1
 				}
+			}
+			.onDisappear {
+				self.userSettings.showUI = true
 			}
 	}
 }
@@ -40,9 +43,9 @@ struct Reading: View {
 private struct ReadingPage: View {
 	let work: Work
 	@ObservedObject var progress: WorkProgress
-	@Binding var showUI: Bool
 
 	@Environment(\.presentationMode) private var presentationMode
+	@ObservedObject private var userSettings = UserSettings.shared
 
 	private let advancePageWidth: CGFloat = 44
 
@@ -61,7 +64,9 @@ private struct ReadingPage: View {
 					}
 				}
 					.onTapGesture {
-						self.showUI.toggle()
+						withAnimation {
+							self.userSettings.showUI.toggle()
+						}
 					}
 				Group {
 					ReadingPageToggle {
@@ -85,7 +90,7 @@ private struct ReadingPage: View {
 						.frame(width: self.advancePageWidth, height: geometry.size.height)
 						.position(x: geometry.size.width - self.advancePageWidth / 2, y: geometry.size.height / 2)
 				}
-				if self.showUI {
+				if self.userSettings.showUI {
 					ReadingBar(geometry: geometry, progress: self.progress)
 				}
 			}
@@ -101,12 +106,13 @@ struct PageImage: View {
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	init(pages: [URL], progress: WorkProgress, geometry: GeometryProxy) {
-		self.page = pages[progress.page - 1]
+		let pageIndex = max(1, progress.page) - 1
+		self.page = pages[pageIndex]
 		self.progress = progress
 		self.geometry = geometry
 
 		self.page.cache(true)
-		pages[safe: progress.page]?.cache(true)
+		pages[safe: pageIndex + 1]?.cache(true)
 	}
 
 	var body: some View {
@@ -117,19 +123,20 @@ struct PageImage: View {
 	}
 }
 
-struct ReadingBar: View {
+private struct ReadingBar: View {
 	let geometry: GeometryProxy
 	@ObservedObject var progress: WorkProgress
 
 	@Environment(\.presentationMode) private var presentationMode
 
 	var body: some View {
-		VStack {
+		VStack(spacing: 0) {
+			Divider()
 			HStack {
 				Spacer()
 				HStack {
 					Button(action: {
-						self.progress.magnification = max(1, self.progress.magnification - 0.03)
+						self.progress.magnification = max(1, self.progress.magnification - 0.025)
 					}) {
 						Text("⊖")
 							.font(Font.system(size: 28).weight(.light))
@@ -137,7 +144,7 @@ struct ReadingBar: View {
 					}
 						.disabled(progress.magnification <= 1)
 					Button(action: {
-						self.progress.magnification = self.progress.magnification + 0.03
+						self.progress.magnification = self.progress.magnification + 0.025
 					}) {
 						Text("⊕")
 							.font(Font.system(size: 28).weight(.light))
@@ -161,7 +168,7 @@ private struct ReadingPageToggle: View {
 
 	var body: some View {
 		Rectangle()
-			.fill(Color.clear)
+			.fill(Color.clear) //TODO messes with ReadingBar blur
 			.contentShape(Rectangle())
 			.onTapGesture(perform: callback)
 	}

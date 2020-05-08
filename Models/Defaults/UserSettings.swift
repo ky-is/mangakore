@@ -14,4 +14,6 @@ final class UserSettings: ObservableObject {
 			save(value: invertContent)
 		}
 	}
+
+	@Published var showUI = true
 }
