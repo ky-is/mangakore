@@ -10,4 +10,14 @@ extension View {
 			}
 		}
 	}
+
+	func hidden(_ enabled: Bool) -> some View {
+		Group {
+			if enabled {
+				hidden()
+			} else {
+				self
+			}
+		}
+	}
 }

@@ -39,6 +39,17 @@ struct ReadingUI: View {
 	}
 }
 
+private struct ReadingPageToggle: View {
+	let callback: () -> Void
+
+	var body: some View {
+		Rectangle()
+			.fill(Color.clear) //TODO messes with ReadingBar blur
+			.contentShape(Rectangle())
+			.onTapGesture(perform: callback)
+	}
+}
+
 private struct ReadingBar: View {
 	let geometry: GeometryProxy
 	@ObservedObject var progress: WorkProgress
@@ -51,11 +62,11 @@ private struct ReadingBar: View {
 			HStack {
 				Spacer()
 				HStack {
-					UnicodeIconButton(label: "⊖") {
+					NavigationUnicodeButton("⊖") {
 						self.progress.magnification = max(1, self.progress.magnification - 0.025)
 					}
 						.disabled(progress.magnification <= 1)
-					UnicodeIconButton(label: "⊕") {
+					NavigationUnicodeButton("⊕") {
 						self.progress.magnification = self.progress.magnification + 0.025
 					}
 						.disabled(progress.magnification > 1.5)
@@ -68,17 +79,6 @@ private struct ReadingBar: View {
 			.transition(.opacity)
 			.background(BlurEffect(style: .systemChromeMaterial))
 			.position(x: geometry.size.width / 2, y: geometry.size.height - (44 + geometry.safeAreaInsets.bottom) / 2)
-	}
-}
-
-private struct ReadingPageToggle: View {
-	let callback: () -> Void
-
-	var body: some View {
-		Rectangle()
-			.fill(Color.clear) //TODO messes with ReadingBar blur
-			.contentShape(Rectangle())
-			.onTapGesture(perform: callback)
 	}
 }
 

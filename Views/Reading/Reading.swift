@@ -4,6 +4,7 @@ struct Reading: View {
 	let work: Work
 	@ObservedObject var progress: WorkProgress
 
+	@State private var showVolumeList = false
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	var body: some View {
@@ -19,11 +20,16 @@ struct Reading: View {
 			.edgesIgnoringSafeArea(.all)
 			.navigationBarTitle(Text(work.name), displayMode: .inline)
 			.navigationBarItems(trailing:
-				Button(action: {
-					self.userSettings.invertContent = !self.userSettings.invertContent
-				}) {
-					Text("☯")
-						.font(.system(size: 24))
+				HStack {
+					NavigationEmojiButton("📖") {
+						self.showVolumeList.toggle()
+					}
+						.popover(isPresented: $showVolumeList, attachmentAnchor: .point(.bottom), arrowEdge: .top) {
+							VolumeList(work: self.work, progress: self.progress)
+						}
+					NavigationEmojiButton("☯️") {
+						self.userSettings.invertContent = !self.userSettings.invertContent
+					}
 						.colorInvert(userSettings.invertContent)
 				}
 			)
@@ -37,6 +43,32 @@ struct Reading: View {
 			.onDisappear {
 				self.userSettings.showUI = true
 			}
+	}
+}
+
+private struct VolumeList: View {
+	let work: Work
+	let progress: WorkProgress
+
+	@Environment(\.presentationMode) private var presentationMode
+
+	var body: some View {
+		let currentVolume = progress.currentVolume
+		return List(work.volumes) { volume in
+			Button(action: {
+				self.progress.volume = volume.id
+				self.presentationMode.wrappedValue.dismiss()
+			}) {
+				HStack {
+					Text("✔︎")
+						.hidden(volume != currentVolume)
+					Text("\(volume.id)巻")
+				}
+			}
+				.disabled(volume == currentVolume)
+		}
+			.font(Font.body.monospacedDigit())
+			.frame(minWidth: 256, minHeight: 256)
 	}
 }
 
