@@ -37,10 +37,11 @@ struct CloudImage: View {
 	let width: CGFloat
 	let height: CGFloat
 	let contentMode: ContentMode
+	let alignment: Alignment?
 
 	@State private var status: CloudImageStatus = .loading
 
-	init(_ url: URL?, width: CGFloat, height: CGFloat, contentMode: ContentMode) {
+	init(_ url: URL?, width: CGFloat, height: CGFloat, contentMode: ContentMode, alignment: Alignment? = nil) {
 		if let url = url, url.lastPathComponent.hasSuffix(".icloud") {
 			let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(7))
 			self.url = url.deletingLastPathComponent().appendingPathComponent(imageFileName)
@@ -50,6 +51,7 @@ struct CloudImage: View {
 		self.width = width
 		self.height = height
 		self.contentMode = contentMode
+		self.alignment = alignment
 	}
 
 	var body: some View {
@@ -62,7 +64,7 @@ struct CloudImage: View {
 				Image(uiImage: UIImage(contentsOfFile: url!.path)!)
 					.resizable()
 					.aspectRatio(contentMode: contentMode)
-					.frame(width: width, height: height)
+					.frame(width: width, height: height, alignment: alignment ?? .center)
 					.clipped()
 			} else if status == .loading {
 				LoadingCloudImage(status: status, width: width, height: height) { _ in
@@ -102,7 +104,6 @@ private struct InvalidCloudImage: View {
 
 struct CloudImage_Previews: PreviewProvider {
 	static var previews: some View {
-		let sampleWork = Work(FileManager.default.url(forUbiquityContainerIdentifier: nil)!)!
-		return WorkIcon(sampleWork)
+		CloudImage(nil, width: 128, height: 128, contentMode: .fit)
 	}
 }

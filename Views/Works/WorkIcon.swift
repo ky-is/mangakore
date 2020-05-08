@@ -10,7 +10,7 @@ struct WorkIcon: View {
 	}
 
 	var body: some View {
-		CloudImage(url, width: size, height: size, contentMode: .fill)
+		CloudImage(url, width: size, height: size, contentMode: .fill, alignment: .leading)
 			.background(Color.gray)
 	}
 }
