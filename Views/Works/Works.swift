@@ -69,6 +69,23 @@ private struct WorksEntry: View {
 				}) {
 					Text("⋯")
 						.bold()
+						.actionPopover(isPresented: $showOptions) {
+							ActionPopover(title: Text(self.work.name).font(.title), message: nil, accentColor: .primary, buttons: [
+								.destructive(Text("Reset reading progress")) {
+									self.progress.volume = 0
+									self.progress.page = 0
+									self.progress.rating = 0
+								},
+								.default(Text("Cache local copy")) {
+									self.work.cache(true)
+								},
+								.destructive(Text("Remove local copy")) {
+									self.work.cache(false)
+								},
+								.cancel(),
+							])
+						}
+//						.accentColor(.primary)
 						.frame(width: 28, height: 28)
 						.background(
 							Circle()
@@ -76,27 +93,10 @@ private struct WorksEntry: View {
 						)
 						.padding()
 				}
-					.accentColor(.black)
 			}
 		}
 			.padding(.trailing, -32)
 			.buttonStyle(BorderlessButtonStyle())
-			.actionSheet(isPresented: $showOptions) {
-				ActionSheet(title: Text(work.name).font(.title), message: nil, buttons: [
-					.destructive(Text("Reset reading progress")) {
-						self.progress.volume = 0
-						self.progress.page = 0
-						self.progress.rating = 0
-					},
-					.default(Text("Cache local copy")) {
-						self.work.cache(true)
-					},
-					.destructive(Text("Remove local copy")) {
-						self.work.cache(false)
-					},
-					.cancel(),
-				])
-			}
 			.accentColor(.primary)
 	}
 }
