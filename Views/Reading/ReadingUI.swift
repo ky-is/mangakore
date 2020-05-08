@@ -8,10 +8,10 @@ struct ReadingUI: View {
 	@Environment(\.presentationMode) private var presentationMode
 	@ObservedObject private var userSettings = UserSettings.shared
 
-	private let advancePageWidth: CGFloat = 44
-
 	var body: some View {
-		Group {
+		let pageWidthRange: ClosedRange<CGFloat> = 40...128
+		let advancePageWidth = pageWidthRange.clamp(geometry.size.width * 0.15)
+		return Group {
 			ReadingPageToggle {
 				if self.progress.page < self.progress.currentVolume.pageCount {
 					self.progress.page = self.progress.page + 1

@@ -12,3 +12,9 @@ extension URL {
 		try? method(self)
 	}
 }
+
+extension ClosedRange {
+	func clamp(_ value: Bound) -> Bound {
+		return Swift.min(upperBound, Swift.max(lowerBound, value))
+	}
+}
