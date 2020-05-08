@@ -63,6 +63,7 @@ private struct ReadingBar: View {
 				Spacer()
 				Group {
 					WorkProgressPage(progress: progress)
+					Text("　")
 					WorkProgressVolume(progress: progress)
 				}
 				Spacer()

@@ -32,7 +32,7 @@ struct WorkProgressPage: View {
 	let progress: WorkProgress
 
 	var body: some View {
-		Text(" \(progress.page)")
+		Text(progress.page.description)
 		+
 		Text("/\(progress.currentVolume.pageCount)")
 			.foregroundColor(.secondary)

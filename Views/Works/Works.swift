@@ -54,8 +54,9 @@ private struct WorksEntry: View {
 				VStack(alignment: .leading) {
 					Text(work.name)
 						.font(.headline)
-					HStack {
+					HStack(spacing: 0) {
 						WorkProgressVolume(progress: progress)
+						Text("　")
 						if progress.volume > 0 && progress.page > 0 {
 							WorkProgressPage(progress: progress)
 						}
