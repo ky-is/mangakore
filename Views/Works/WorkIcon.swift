@@ -4,8 +4,8 @@ struct WorkIcon: View {
 	let url: URL?
 	let size: CGFloat
 
-	init(_ work: Work, size: CGFloat = 128) {
-		self.url = work.icon
+	init(_ progress: WorkProgress, size: CGFloat = 128) {
+		self.url = progress.currentVolume.icon
 		self.size = size
 	}
 
@@ -16,8 +16,9 @@ struct WorkIcon: View {
 }
 
 struct WorkIcon_Previews: PreviewProvider {
+	static let sampleWork = Work(FileManager.default.url(forUbiquityContainerIdentifier: nil)!)!
+
 	static var previews: some View {
-		let sampleWork = Work(FileManager.default.url(forUbiquityContainerIdentifier: nil)!)!
-		return WorkIcon(sampleWork)
+		WorkIcon(WorkProgress(sampleWork))
 	}
 }

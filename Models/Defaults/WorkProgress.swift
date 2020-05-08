@@ -47,6 +47,6 @@ final class WorkProgress: ObservableObject {
 	}
 
 	var currentVolume: Volume {
-		work.volumes[volume - 1]
+		work.volumes[max(0, volume - 1)]
 	}
 }

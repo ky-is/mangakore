@@ -1,10 +1,12 @@
 import SwiftUI
 
-struct Volume {
+struct Volume: Identifiable, Equatable {
+	let id: Int
 	let root: URL
 	let images: [URL]
 
-	init(_ root: URL, urls: [URL]) {
+	init(_ number: Int, root: URL, urls: [URL]) {
+		self.id = number
 		self.root = root
 		let imageExtensions = [".png", ".jpg", ".jpeg"]
 		self.images = urls
@@ -22,10 +24,15 @@ struct Volume {
 				}
 				return aName.compare(bName) == .orderedAscending
 			}
+		icon?.cache(true)
 	}
 
 	var pageCount: Int {
 		images.count
+	}
+
+	var icon: URL? {
+		images.first
 	}
 
 	func cache(_ enable: Bool) {
@@ -37,7 +44,6 @@ struct Work: Identifiable {
 	let id: String
 	let name: String
 	let root: URL
-	let icon: URL?
 	let volumes: [Volume]
 
 	init?(_ root: URL) {
@@ -50,25 +56,25 @@ struct Work: Identifiable {
 			}
 			return isDirectory
 		}
-		let volumes: [Volume?]
 		if childDirectories.isEmpty {
-			volumes = [Volume(root, urls: contents)]
+			self.volumes = [Volume(1, root: root, urls: contents)]
 		} else {
-			volumes = childDirectories
+			let directories = childDirectories
 				.sorted { a, b in a.lastPathComponent.compare(b.lastPathComponent) == .orderedAscending }
-				.compactMap { url in
-					guard let children = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil) else {
-						return nil
-					}
-					return Volume(url, urls: children)
+			var volumesAccumulator: [Volume] = []
+			var currentVolume = 1
+			directories.forEach { url in
+				guard let children = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil) else {
+					return
 				}
+				volumesAccumulator.append(Volume(currentVolume, root: url, urls: children))
+				currentVolume += 1
+			}
+			self.volumes = volumesAccumulator
 		}
 		self.id = root.lastPathComponent.lowercased().filter { !$0.isWhitespace }
 		self.name = root.lastPathComponent
 		self.root = root
-		self.volumes = volumes.compactMap { $0 }
-		self.icon = self.volumes.first?.images.first
-		self.icon?.cache(true) //SAMPLE false
 	}
 
 	func cache(_ enable: Bool) {

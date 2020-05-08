@@ -50,7 +50,7 @@ private struct WorksEntry: View {
 	var body: some View {
 		NavigationLink(destination: Reading(work: work, progress: progress)) {
 			HStack {
-				WorkIcon(work)
+				WorkIcon(progress)
 				VStack(alignment: .leading) {
 					Text(work.name)
 						.font(.headline)
