@@ -59,9 +59,14 @@ private struct ReadingBar: View {
 	var body: some View {
 		VStack(spacing: 0) {
 			Divider()
-			HStack {
+			HStack(spacing: 0) {
 				Spacer()
-				HStack {
+				Group {
+					WorkProgressPage(progress: progress)
+					WorkProgressVolume(progress: progress)
+				}
+				Spacer()
+				Group {
 					NavigationUnicodeButton("⊖") {
 						self.progress.magnification = max(1, self.progress.magnification - 0.025)
 					}

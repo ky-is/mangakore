@@ -6,7 +6,7 @@ private func getKey(for id: String, named: String) -> String {
 }
 
 final class WorkProgress: ObservableObject {
-	private let work: Work
+	let work: Work
 
 	private func sync(value: Any?, name: String = #function) {
 		let key = getKey(for: work.id, named: name)

@@ -15,7 +15,7 @@
 		244146AA2461D902008EAFDA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 244146A82461D902008EAFDA /* LaunchScreen.storyboard */; };
 		244146B92461E0A0008EAFDA /* CloudContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244146B82461E0A0008EAFDA /* CloudContainer.swift */; };
 		244146BB2461EB1D008EAFDA /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244146BA2461EB1D008EAFDA /* DataModel.swift */; };
-		24440F3724633BEC008AA5AF /* WorkIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3424633BEC008AA5AF /* WorkIcon.swift */; };
+		24440F3724633BEC008AA5AF /* Work.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3424633BEC008AA5AF /* Work.swift */; };
 		24440F3824633BEC008AA5AF /* Works.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3524633BEC008AA5AF /* Works.swift */; };
 		24440F3924633BEC008AA5AF /* Reading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3624633BEC008AA5AF /* Reading.swift */; };
 		24515B5024635B3400C3D31A /* PinchToZoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24515B4F24635B3400C3D31A /* PinchToZoom.swift */; };
@@ -31,7 +31,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2441469A2461D8FE008EAFDA /* manga kore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "manga kore.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2441469A2461D8FE008EAFDA /* 漫画.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "漫画.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2441469D2461D8FE008EAFDA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2441469F2461D8FE008EAFDA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		244146A12461D8FE008EAFDA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -42,7 +42,7 @@
 		244146B62461DD97008EAFDA /* manga kore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "manga kore.entitlements"; sourceTree = "<group>"; };
 		244146B82461E0A0008EAFDA /* CloudContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudContainer.swift; sourceTree = "<group>"; };
 		244146BA2461EB1D008EAFDA /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
-		24440F3424633BEC008AA5AF /* WorkIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkIcon.swift; sourceTree = "<group>"; };
+		24440F3424633BEC008AA5AF /* Work.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Work.swift; sourceTree = "<group>"; };
 		24440F3524633BEC008AA5AF /* Works.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Works.swift; sourceTree = "<group>"; };
 		24440F3624633BEC008AA5AF /* Reading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reading.swift; sourceTree = "<group>"; };
 		24515B4F24635B3400C3D31A /* PinchToZoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchToZoom.swift; sourceTree = "<group>"; };
@@ -82,7 +82,7 @@
 		2441469B2461D8FE008EAFDA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2441469A2461D8FE008EAFDA /* manga kore.app */,
+				2441469A2461D8FE008EAFDA /* 漫画.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -181,7 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				24440F3524633BEC008AA5AF /* Works.swift */,
-				24440F3424633BEC008AA5AF /* WorkIcon.swift */,
+				24440F3424633BEC008AA5AF /* Work.swift */,
 			);
 			path = Works;
 			sourceTree = "<group>";
@@ -211,7 +211,7 @@
 			);
 			name = "manga kore";
 			productName = "manga kore";
-			productReference = 2441469A2461D8FE008EAFDA /* manga kore.app */;
+			productReference = 2441469A2461D8FE008EAFDA /* 漫画.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -268,7 +268,7 @@
 				24C5E74A24626B0100D980F2 /* CloudImage.swift in Sources */,
 				248027F7246500450004230F /* NavigationButtons.swift in Sources */,
 				24EB5589246365B300F8CB11 /* VisualEffect.swift in Sources */,
-				24440F3724633BEC008AA5AF /* WorkIcon.swift in Sources */,
+				24440F3724633BEC008AA5AF /* Work.swift in Sources */,
 				24515B5024635B3400C3D31A /* PinchToZoom.swift in Sources */,
 				2441469E2461D8FE008EAFDA /* AppDelegate.swift in Sources */,
 				244146A02461D8FE008EAFDA /* SceneDelegate.swift in Sources */,
@@ -431,7 +431,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "is.ky.manga-kore";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "漫画";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -454,7 +454,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "is.ky.manga-kore";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "漫画";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

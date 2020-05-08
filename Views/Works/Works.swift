@@ -55,19 +55,9 @@ private struct WorksEntry: View {
 					Text(work.name)
 						.font(.headline)
 					HStack {
-						Text(progress.volume.description)
-						+
-						Text("/\(work.volumes.count)")
-							.foregroundColor(.secondary)
-						+
-						Text("巻")
+						WorkProgressVolume(progress: progress)
 						if progress.volume > 0 && progress.page > 0 {
-							Text(" \(progress.page)")
-							+
-							Text("/\(progress.currentVolume.pageCount)")
-								.foregroundColor(.secondary)
-							+
-							Text("頁")
+							WorkProgressPage(progress: progress)
 						}
 					}
 						.font(Font.subheadline.monospacedDigit())
