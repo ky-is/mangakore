@@ -8,7 +8,7 @@ private func getKey(for id: String, named: String) -> String {
 final class WorkProgress: ObservableObject {
 	private let work: Work
 
-	private func save(value: Any?, name: String = #function) {
+	private func sync(value: Any?, name: String = #function) {
 		let key = getKey(for: work.id, named: name)
 		UserDefaults.standard.set(value, forKey: key)
 		NSUbiquitousKeyValueStore.default.set(value, forKey: key)
@@ -16,28 +16,25 @@ final class WorkProgress: ObservableObject {
 
 	@Published var volume: Int {
 		didSet {
-			save(value: volume)
+			sync(value: volume)
 			page = 1
 			work.volumes[safe: oldValue]?.cache(false)
 		}
 	}
+
 	@Published var page: Int {
 		didSet {
-			save(value: page)
+			sync(value: page)
 		}
 	}
 
 	@Published var rating: Int {
 		didSet {
-			save(value: rating)
+			sync(value: rating)
 		}
 	}
 
-	@Published var magnification: Float {
-		didSet {
-			save(value: magnification)
-		}
-	}
+	@Published var magnification: Float
 
 	init(_ work: Work) {
 		let id = work.id
