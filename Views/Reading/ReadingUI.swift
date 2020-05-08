@@ -51,20 +51,12 @@ private struct ReadingBar: View {
 			HStack {
 				Spacer()
 				HStack {
-					Button(action: {
+					UnicodeIconButton(label: "⊖") {
 						self.progress.magnification = max(1, self.progress.magnification - 0.025)
-					}) {
-						Text("⊖")
-							.font(Font.system(size: 28).weight(.light))
-							.frame(width: 44)
 					}
 						.disabled(progress.magnification <= 1)
-					Button(action: {
+					UnicodeIconButton(label: "⊕") {
 						self.progress.magnification = self.progress.magnification + 0.025
-					}) {
-						Text("⊕")
-							.font(Font.system(size: 28).weight(.light))
-							.frame(width: 44)
 					}
 						.disabled(progress.magnification > 1.5)
 				}
