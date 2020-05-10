@@ -5,6 +5,7 @@ struct Reading: View {
 
 	@State private var showVolumeList = false
 	@ObservedObject private var userSettings = UserSettings.shared
+	@EnvironmentObject private var dataModel: DataModel
 
 	var body: some View {
 		Group {
@@ -34,13 +35,13 @@ struct Reading: View {
 			)
 			.navigationBarHidden(!userSettings.showUI)
 			.onAppear {
-				self.userSettings.showUI = false
 				if self.progress.volume < 1 {
 					self.progress.volume = 1
 				}
 			}
 			.onDisappear {
 				self.userSettings.showUI = true
+				self.dataModel.reading = nil
 			}
 	}
 }
@@ -48,14 +49,14 @@ struct Reading: View {
 private struct VolumeList: View {
 	@ObservedObject var progress: WorkProgress
 
-	@Environment(\.presentationMode) private var presentationMode
+	@EnvironmentObject private var dataModel: DataModel
 
 	var body: some View {
 		let currentVolume = progress.currentVolume
 		return List(progress.work.volumes) { volume in
 			Button(action: {
 				self.progress.volume = volume.id
-				self.presentationMode.wrappedValue.dismiss()
+				self.dataModel.reading = nil
 			}) {
 				HStack {
 					Text("✔︎")
@@ -73,10 +74,11 @@ private struct VolumeList: View {
 private struct ReadingPage: View {
 	@ObservedObject var progress: WorkProgress
 
-	@Environment(\.presentationMode) private var presentationMode
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	private let advancePageWidth: CGFloat = 44
+
+	@State private var hasInteracted = false
 
 	var body: some View {
 		let pages = progress.currentVolume.images
@@ -93,11 +95,12 @@ private struct ReadingPage: View {
 					}
 				}
 					.onTapGesture {
+						self.hasInteracted = true
 						withAnimation {
 							self.userSettings.showUI.toggle()
 						}
 					}
-				ReadingUI(geometry: geometry, progress: self.progress)
+				ReadingUI(geometry: geometry, progress: self.progress, hasInteracted: self.$hasInteracted)
 			}
 		}
 	}

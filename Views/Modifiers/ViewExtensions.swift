@@ -25,3 +25,13 @@ extension View {
 		self
 	}
 }
+
+struct HiddenNavigationLink<Destination: View>: View {
+	let enabled: Bool
+	let destination: Destination
+
+	var body: some View {
+		NavigationLink(destination: destination, isActive: .constant(enabled)) { EmptyView() }
+			.hidden()
+	}
+}

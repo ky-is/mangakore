@@ -3,26 +3,27 @@ import SwiftUI
 struct ReadingUI: View {
 	let geometry: GeometryProxy
 	@ObservedObject var progress: WorkProgress
+	@Binding var hasInteracted: Bool
 
-	@Environment(\.presentationMode) private var presentationMode
+	@EnvironmentObject private var dataModel: DataModel
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	var body: some View {
 		let pageWidthRange: ClosedRange<CGFloat> = 40...128
 		let advancePageWidth = pageWidthRange.clamp(geometry.size.width * 0.15)
 		return Group {
-			ReadingPageToggle {
+			ReadingPageToggle(hasInteracted: $hasInteracted) {
 				if self.progress.page < self.progress.currentVolume.pageCount {
 					self.progress.page = self.progress.page + 1
 				} else if self.progress.volume < self.progress.work.volumes.count {
 					self.progress.volume = self.progress.volume + 1
 				} else {
-					self.presentationMode.wrappedValue.dismiss()
+					self.dataModel.reading = nil
 				}
 			}
 				.frame(width: advancePageWidth, height: geometry.size.height)
 				.position(x: 0 + advancePageWidth / 2, y: geometry.size.height / 2)
-			ReadingPageToggle {
+			ReadingPageToggle(hasInteracted: $hasInteracted) {
 				if self.progress.page > 1 {
 					self.progress.page = self.progress.page - 1
 				} else if self.progress.volume > 1 {
@@ -39,21 +40,25 @@ struct ReadingUI: View {
 }
 
 private struct ReadingPageToggle: View {
+	@Binding var hasInteracted: Bool
 	let callback: () -> Void
 
 	var body: some View {
 		Rectangle()
 			.fill(Color.clear) //TODO messes with ReadingBar blur
 			.contentShape(Rectangle())
-			.onTapGesture(perform: callback)
+			.onTapGesture {
+				if !self.hasInteracted {
+					UserSettings.shared.showUI = false
+				}
+				self.callback()
+			}
 	}
 }
 
 private struct ReadingBar: View {
 	let geometry: GeometryProxy
 	@ObservedObject var progress: WorkProgress
-
-	@Environment(\.presentationMode) private var presentationMode
 
 	var body: some View {
 		VStack(spacing: 0) {
@@ -93,7 +98,7 @@ struct ReadingUI_Previews: PreviewProvider {
 	static var previews: some View {
 		NavigationView {
 			GeometryReader { geometry in
-				ReadingUI(geometry: geometry, progress: WorkProgress(work))
+				ReadingUI(geometry: geometry, progress: WorkProgress(work), hasInteracted: .constant(false))
 			}
 				.edgesIgnoringSafeArea(.all)
 		}

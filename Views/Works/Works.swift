@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct Works: View {
+	@EnvironmentObject private var dataModel: DataModel
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	var body: some View {
@@ -20,6 +21,9 @@ private struct WorksListContainer: View {
 		Group {
 			if dataModel.worksProgress != nil {
 				WorksList(worksProgress: dataModel.worksProgress!)
+					.background(
+						HiddenNavigationLink(enabled: dataModel.reading != nil, destination: Reading(progress: dataModel.reading ?? WorkProgress(Work(URL(string: "/")!)!)))
+					)
 			} else {
 				VStack {
 					Text("iCloud Drive Unavailable")
@@ -35,8 +39,6 @@ private struct WorksListContainer: View {
 }
 
 private struct WorksList: View {
-	@EnvironmentObject var dataModel: DataModel
-
 	let reading: [WorkProgress]
 	let unread: [WorkProgress]
 	let finished: [WorkProgress]
@@ -83,7 +85,6 @@ private struct WorksList: View {
 				}
 			}
 		}
-			.reload(on: dataModel.updatedAt)
 	}
 }
 
@@ -93,9 +94,11 @@ private struct WorksEntry: View {
 	@State private var showOptions = false
 
 	var body: some View {
-		NavigationLink(destination: Reading(progress: progress)) {
-			HStack {
-				WorkIcon(progress)
+		HStack {
+			WorkIcon(progress)
+			Button(action: {
+				DataModel.shared.reading = self.progress
+			}) {
 				VStack(alignment: .leading) {
 					Text(progress.work.name)
 						.font(.headline)
@@ -108,40 +111,38 @@ private struct WorksEntry: View {
 					}
 						.font(Font.subheadline.monospacedDigit())
 				}
-				Spacer()
-				Button(action: {
-					self.showOptions = true
-				}) {
-					Text("⋯")
-						.bold()
-						.actionPopover(isPresented: $showOptions) {
-							ActionPopover(title: Text(self.progress.work.name).font(.title), message: nil, accentColor: .primary, buttons: [
-								.destructive(Text("Reset reading progress")) {
-									self.progress.volume = 0
-									self.progress.page = 0
-									self.progress.rating = 0
-								},
-								.default(Text("Cache local copy")) {
-									self.progress.work.cache(true)
-								},
-								.destructive(Text("Remove local copy")) {
-									self.progress.work.cache(false)
-								},
-								.cancel(),
-							])
-						}
-//						.accentColor(.primary)
-						.frame(width: 28, height: 28)
-						.background(
-							Circle()
-								.fill(Color.gray.opacity(0.5))
-						)
-						.padding()
-				}
 			}
+			Spacer()
+			Button(action: {
+				self.showOptions = true
+			}) {
+				Text("⋯")
+					.bold()
+					.actionPopover(isPresented: $showOptions) {
+						ActionPopover(title: Text(self.progress.work.name).font(.title), message: nil, accentColor: .primary, buttons: [
+							.destructive(Text("Reset reading progress")) {
+								self.progress.volume = 0
+								self.progress.page = 0
+								self.progress.rating = 0
+							},
+							.default(Text("Cache local copy")) {
+								self.progress.work.cache(true)
+							},
+							.destructive(Text("Remove local copy")) {
+								self.progress.work.cache(false)
+							},
+							.cancel(),
+						])
+					}
+					.frame(width: 28, height: 28)
+					.background(
+						Circle()
+							.fill(Color.gray.opacity(0.5))
+					)
+					.padding()
+			}
+				.buttonStyle(BorderlessButtonStyle())
 		}
-			.padding(.trailing, -32)
-			.buttonStyle(BorderlessButtonStyle())
 			.accentColor(.primary)
 	}
 }

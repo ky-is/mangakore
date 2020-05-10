@@ -82,21 +82,30 @@ struct Work {
 	}
 }
 
+private let savedWorkIDKey = "savedWorkID"
+
 final class DataModel: ObservableObject {
 	static let shared = DataModel()
 
 	@Published var worksProgress: [WorkProgress]? = []
 
-	@Published var updatedAt = Date()
+	@Published var reading: WorkProgress? = nil {
+		didSet {
+			NSUbiquitousKeyValueStore.default.set(reading?.work.id, forKey: savedWorkIDKey)
+			objectWillChange.send()
+		}
+	}
 
 	func update() {
 		worksProgress = CloudContainer.contents?
 			.compactMap { Work($0) }
 			.map { WorkProgress($0) }
-		markAsUpdated()
+		if let worksProgress = worksProgress, let savedWorkID = NSUbiquitousKeyValueStore.default.string(forKey: savedWorkIDKey) {
+			reading = worksProgress.first { $0.work.id == savedWorkID }
+		}
 	}
 
 	func markAsUpdated() {
-		updatedAt = Date()
+		objectWillChange.send()
 	}
 }
