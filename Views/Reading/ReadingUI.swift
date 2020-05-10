@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ReadingUI: View {
 	let geometry: GeometryProxy
-	let work: Work
 	@ObservedObject var progress: WorkProgress
 
 	@Environment(\.presentationMode) private var presentationMode
@@ -15,7 +14,7 @@ struct ReadingUI: View {
 			ReadingPageToggle {
 				if self.progress.page < self.progress.currentVolume.pageCount {
 					self.progress.page = self.progress.page + 1
-				} else if self.progress.volume < self.work.volumes.count {
+				} else if self.progress.volume < self.progress.work.volumes.count {
 					self.progress.volume = self.progress.volume + 1
 				} else {
 					self.presentationMode.wrappedValue.dismiss()
@@ -94,7 +93,7 @@ struct ReadingUI_Previews: PreviewProvider {
 	static var previews: some View {
 		NavigationView {
 			GeometryReader { geometry in
-				ReadingUI(geometry: geometry, work: work, progress: WorkProgress(work))
+				ReadingUI(geometry: geometry, progress: WorkProgress(work))
 			}
 				.edgesIgnoringSafeArea(.all)
 		}

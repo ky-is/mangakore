@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct Reading: View {
-	let work: Work
 	@ObservedObject var progress: WorkProgress
 
 	@State private var showVolumeList = false
@@ -9,23 +8,23 @@ struct Reading: View {
 
 	var body: some View {
 		Group {
-			if work.volumes.isEmpty {
+			if progress.work.volumes.isEmpty {
 				Text("Invalid folder layout")
 			} else if progress.volume > 0 {
-				ReadingPage(work: work, progress: progress)
+				ReadingPage(progress: progress)
 			} else {
 				EmptyView()
 			}
 		}
 			.edgesIgnoringSafeArea(.all)
-			.navigationBarTitle(Text(work.name), displayMode: .inline)
+			.navigationBarTitle(Text(progress.work.name), displayMode: .inline)
 			.navigationBarItems(trailing:
 				HStack {
 					NavigationEmojiButton("📖") {
 						self.showVolumeList.toggle()
 					}
 						.popover(isPresented: $showVolumeList, attachmentAnchor: .point(.bottom), arrowEdge: .top) {
-							VolumeList(work: self.work, progress: self.progress)
+							VolumeList(progress: self.progress)
 						}
 					NavigationEmojiButton("☯️") {
 						self.userSettings.invertContent = !self.userSettings.invertContent
@@ -47,14 +46,13 @@ struct Reading: View {
 }
 
 private struct VolumeList: View {
-	let work: Work
-	let progress: WorkProgress
+	@ObservedObject var progress: WorkProgress
 
 	@Environment(\.presentationMode) private var presentationMode
 
 	var body: some View {
 		let currentVolume = progress.currentVolume
-		return List(work.volumes) { volume in
+		return List(progress.work.volumes) { volume in
 			Button(action: {
 				self.progress.volume = volume.id
 				self.presentationMode.wrappedValue.dismiss()
@@ -73,7 +71,6 @@ private struct VolumeList: View {
 }
 
 private struct ReadingPage: View {
-	let work: Work
 	@ObservedObject var progress: WorkProgress
 
 	@Environment(\.presentationMode) private var presentationMode
@@ -100,7 +97,7 @@ private struct ReadingPage: View {
 							self.userSettings.showUI.toggle()
 						}
 					}
-				ReadingUI(geometry: geometry, work: self.work, progress: self.progress)
+				ReadingUI(geometry: geometry, progress: self.progress)
 			}
 		}
 	}
@@ -108,7 +105,7 @@ private struct ReadingPage: View {
 
 struct PageImage: View {
 	let page: URL
-	let progress: WorkProgress
+	@ObservedObject var progress: WorkProgress
 	let geometry: GeometryProxy
 
 	@ObservedObject private var userSettings = UserSettings.shared
@@ -134,6 +131,6 @@ struct PageImage: View {
 struct Reading_Previews: PreviewProvider {
 	static var previews: some View {
 		let work = Work(URL(string: "/")!)!
-		return Reading(work: work, progress: WorkProgress(work))
+		return Reading(progress: WorkProgress(work))
 	}
 }

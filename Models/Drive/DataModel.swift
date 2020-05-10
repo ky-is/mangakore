@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct Volume: Identifiable, Equatable {
+struct Volume: Equatable, Identifiable {
 	let id: Int
 	let root: URL
 	let images: [URL]
@@ -40,7 +40,7 @@ struct Volume: Identifiable, Equatable {
 	}
 }
 
-struct Work: Identifiable {
+struct Work {
 	let id: String
 	let name: String
 	let root: URL
@@ -85,9 +85,11 @@ struct Work: Identifiable {
 final class DataModel: ObservableObject {
 	static let shared = DataModel()
 
-	@Published var works: [Work]? = []
+	@Published var worksProgress: [WorkProgress]? = []
 
 	func update() {
-		works = CloudContainer.contents?.compactMap { Work($0) }
+		worksProgress = CloudContainer.contents?
+			.compactMap { Work($0) }
+			.map { WorkProgress($0) }
 	}
 }

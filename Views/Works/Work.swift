@@ -16,7 +16,7 @@ struct WorkIcon: View {
 }
 
 struct WorkProgressVolume: View {
-	let progress: WorkProgress
+	@ObservedObject var progress: WorkProgress
 
 	var body: some View {
 		Text(progress.volume.description)
@@ -29,7 +29,7 @@ struct WorkProgressVolume: View {
 }
 
 struct WorkProgressPage: View {
-	let progress: WorkProgress
+	@ObservedObject var progress: WorkProgress
 
 	var body: some View {
 		Text(progress.page.description)

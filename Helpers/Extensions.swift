@@ -23,3 +23,9 @@ extension ClosedRange {
 		return Swift.min(upperBound, Swift.max(lowerBound, value))
 	}
 }
+
+extension NSUbiquitousKeyValueStore {
+	func integer(forKey key: String) -> Int {
+		return Int(longLong(forKey: key))
+	}
+}

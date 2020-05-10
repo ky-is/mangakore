@@ -18,9 +18,9 @@ private struct WorksList: View {
 
 	var body: some View {
 		Group {
-			if dataModel.works != nil {
-				List(dataModel.works!) {
-					WorksEntry(work: $0)
+			if dataModel.worksProgress != nil {
+				List(dataModel.worksProgress!) {
+					WorksEntry(progress: $0)
 				}
 			} else {
 				VStack {
@@ -37,22 +37,16 @@ private struct WorksList: View {
 }
 
 private struct WorksEntry: View {
-	let work: Work
+	@ObservedObject var progress: WorkProgress
 
-	@ObservedObject private var progress: WorkProgress
 	@State private var showOptions = false
 
-	init(work: Work) {
-		self.work = work
-		self.progress = WorkProgress(work)
-	}
-
 	var body: some View {
-		NavigationLink(destination: Reading(work: work, progress: progress)) {
+		NavigationLink(destination: Reading(progress: progress)) {
 			HStack {
 				WorkIcon(progress)
 				VStack(alignment: .leading) {
-					Text(work.name)
+					Text(progress.work.name)
 						.font(.headline)
 					HStack(spacing: 0) {
 						WorkProgressVolume(progress: progress)
@@ -70,17 +64,17 @@ private struct WorksEntry: View {
 					Text("⋯")
 						.bold()
 						.actionPopover(isPresented: $showOptions) {
-							ActionPopover(title: Text(self.work.name).font(.title), message: nil, accentColor: .primary, buttons: [
+							ActionPopover(title: Text(self.progress.work.name).font(.title), message: nil, accentColor: .primary, buttons: [
 								.destructive(Text("Reset reading progress")) {
 									self.progress.volume = 0
 									self.progress.page = 0
 									self.progress.rating = 0
 								},
 								.default(Text("Cache local copy")) {
-									self.work.cache(true)
+									self.progress.work.cache(true)
 								},
 								.destructive(Text("Remove local copy")) {
-									self.work.cache(false)
+									self.progress.work.cache(false)
 								},
 								.cancel(),
 							])

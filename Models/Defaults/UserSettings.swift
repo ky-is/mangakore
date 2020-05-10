@@ -6,7 +6,6 @@ final class UserSettings: ObservableObject {
 
 	private func save(value: Any?, name: String = #function) {
 		UserDefaults.standard.set(value, forKey: name)
-		NSUbiquitousKeyValueStore.default.set(value, forKey: name)
 	}
 
 	@Published var invertContent = UserDefaults.standard.bool(forKey: "invertContent") {

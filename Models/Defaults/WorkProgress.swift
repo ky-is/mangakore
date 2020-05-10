@@ -5,12 +5,11 @@ private func getKey(for id: String, named: String) -> String {
 	return "\(id)｜\(named)"
 }
 
-final class WorkProgress: ObservableObject {
+final class WorkProgress: ObservableObject, Identifiable {
 	let work: Work
 
 	private func sync(value: Any?, name: String = #function) {
 		let key = getKey(for: work.id, named: name)
-		UserDefaults.standard.set(value, forKey: key)
 		NSUbiquitousKeyValueStore.default.set(value, forKey: key)
 	}
 
@@ -34,15 +33,15 @@ final class WorkProgress: ObservableObject {
 		}
 	}
 
-	@Published var magnification: Float
+	@Published var magnification: Double
 
 	init(_ work: Work) {
 		let id = work.id
 		self.work = work
-		self.volume = UserDefaults.standard.integer(forKey: getKey(for: id, named: "volume"))
-		self.page = UserDefaults.standard.integer(forKey: getKey(for: id, named: "page"))
-		self.rating = UserDefaults.standard.integer(forKey: getKey(for: id, named: "rating"))
-		let magnification = UserDefaults.standard.float(forKey: getKey(for: id, named: "magnification"))
+		self.volume = NSUbiquitousKeyValueStore.default.integer(forKey: getKey(for: id, named: "volume"))
+		self.page = NSUbiquitousKeyValueStore.default.integer(forKey: getKey(for: id, named: "page"))
+		self.rating = NSUbiquitousKeyValueStore.default.integer(forKey: getKey(for: id, named: "rating"))
+		let magnification = NSUbiquitousKeyValueStore.default.double(forKey: getKey(for: id, named: "magnification"))
 		self.magnification = magnification > 0 ? magnification : 1
 	}
 
