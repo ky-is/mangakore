@@ -4,6 +4,11 @@ extension Collection {
 	subscript(safe index: Index) -> Element? {
 		indices.contains(index) ? self[index] : nil
 	}
+
+	subscript(suffix suffixIndex: Int) -> Element {
+		let resultIndex = index(endIndex, offsetBy: -suffixIndex - 1)
+		return self[resultIndex]
+	}
 }
 
 extension URL {
