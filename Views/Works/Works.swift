@@ -5,7 +5,7 @@ struct Works: View {
 
 	var body: some View {
 		NavigationView {
-			WorksList()
+			WorksListContainer()
 				.navigationBarTitle("漫画")
 		}
 			.navigationViewStyle(StackNavigationViewStyle())
@@ -13,15 +13,13 @@ struct Works: View {
 	}
 }
 
-private struct WorksList: View {
+private struct WorksListContainer: View {
 	@EnvironmentObject var dataModel: DataModel
 
 	var body: some View {
 		Group {
 			if dataModel.worksProgress != nil {
-				List(dataModel.worksProgress!) {
-					WorksEntry(progress: $0)
-				}
+				WorksList(worksProgress: dataModel.worksProgress!)
 			} else {
 				VStack {
 					Text("iCloud Drive Unavailable")
@@ -33,6 +31,59 @@ private struct WorksList: View {
 					.padding(.horizontal)
 			}
 		}
+	}
+}
+
+private struct WorksList: View {
+	@EnvironmentObject var dataModel: DataModel
+
+	let reading: [WorkProgress]
+	let unread: [WorkProgress]
+	let finished: [WorkProgress]
+
+	init(worksProgress: [WorkProgress]) {
+		var reading: [WorkProgress] = []
+		var unread: [WorkProgress] = []
+		var finished: [WorkProgress] = []
+		for workProgress in worksProgress {
+			if workProgress.finished {
+				finished.append(workProgress)
+			} else if workProgress.volume > 1 || workProgress.page > 1 {
+				reading.append(workProgress)
+			} else {
+				unread.append(workProgress)
+			}
+		}
+		self.reading = reading
+		self.unread = unread
+		self.finished = finished
+	}
+
+	var body: some View {
+		List {
+			if !reading.isEmpty {
+				Section(header: Text("Reading")) {
+					ForEach(reading) {
+						WorksEntry(progress: $0)
+					}
+				}
+			}
+			if !unread.isEmpty {
+				Section(header: Text("Unread")) {
+					ForEach(unread) {
+						WorksEntry(progress: $0)
+					}
+				}
+			}
+			if !finished.isEmpty {
+				Section(header: Text("Finished")) {
+					ForEach(finished) {
+						WorksEntry(progress: $0)
+					}
+				}
+			}
+		}
+			.reload(on: dataModel.updatedAt)
 	}
 }
 

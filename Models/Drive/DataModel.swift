@@ -87,9 +87,16 @@ final class DataModel: ObservableObject {
 
 	@Published var worksProgress: [WorkProgress]? = []
 
+	@Published var updatedAt = Date()
+
 	func update() {
 		worksProgress = CloudContainer.contents?
 			.compactMap { Work($0) }
 			.map { WorkProgress($0) }
+		markAsUpdated()
+	}
+
+	func markAsUpdated() {
+		updatedAt = Date()
 	}
 }

@@ -18,12 +18,14 @@ final class WorkProgress: ObservableObject, Identifiable {
 			sync(value: volume)
 			page = 1
 			work.volumes[safe: oldValue]?.cache(false)
+			DataModel.shared.markAsUpdated()
 		}
 	}
 
 	@Published var page: Int {
 		didSet {
 			sync(value: page)
+			DataModel.shared.markAsUpdated()
 		}
 	}
 
@@ -47,5 +49,13 @@ final class WorkProgress: ObservableObject, Identifiable {
 
 	var currentVolume: Volume {
 		work.volumes[max(0, volume - 1)]
+	}
+
+	var startedReading: Bool {
+		volume > 1 || page > 1
+	}
+
+	var finished: Bool {
+		volume >= work.volumes.count && page >= (work.volumes.last?.pageCount ?? 0)
 	}
 }

@@ -20,4 +20,8 @@ extension View {
 			}
 		}
 	}
+
+	func reload(on: Any?) -> some View {
+		self
+	}
 }
