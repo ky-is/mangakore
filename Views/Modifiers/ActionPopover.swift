@@ -44,8 +44,16 @@ struct ActionPopover {
 	func popover(isPresented: Binding<Bool>) -> some View {
 		let popoverButtons = Array(buttons.filter({ $0.kind != .cancel }).enumerated())
 		return VStack(spacing: 0) {
+			VStack {
+				title
+					.font(.headline)
+				message
+					.font(.subheadline)
+			}
+				.frame(height: height)
 			ForEach(popoverButtons, id: \.offset) { (offset, button) in
 				Group {
+					Divider()
 					SwiftUI.Button(action: {
 						isPresented.wrappedValue = false
 						if let action = button.action {
@@ -57,13 +65,10 @@ struct ActionPopover {
 					})
 						.accentColor(button.kind == .destructive ? .red : self.accentColor)
 						.frame(width: self.width, height: self.height)
-					if offset < popoverButtons.count - 1 {
-						Divider()
-					}
 				}
 			}
 		}
-			.frame(width: width, height: (height) * CGFloat(popoverButtons.count) + 1)
+			.frame(width: width, height: (height) * CGFloat(popoverButtons.count + 1) + 1)
 	}
 
 	struct Button {
