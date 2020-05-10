@@ -35,4 +35,8 @@ final class DefaultsSync: NSObject {
 			}
 		}
 	}
+
+	static func synchronize() {
+		NSUbiquitousKeyValueStore.default.synchronize()
+	}
 }

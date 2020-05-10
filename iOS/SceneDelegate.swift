@@ -18,4 +18,11 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		DataModel.shared.update()
 	}
 
+	func sceneWillResignActive(_ scene: UIScene) {
+		DefaultsSync.synchronize()
+	}
+
+	func sceneDidBecomeActive(_ scene: UIScene) {
+		DefaultsSync.synchronize()
+	}
 }
