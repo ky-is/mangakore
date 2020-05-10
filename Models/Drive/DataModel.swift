@@ -11,7 +11,7 @@ struct Volume: Equatable, Identifiable {
 		let imageExtensions = [".png", ".jpg", ".jpeg"]
 		self.images = urls
 			.filter { url in
-				return imageExtensions.contains { url.lastPathComponent.contains($0) }
+				return imageExtensions.contains { url.lastPathComponent.lowercased().contains($0) }
 			}
 			.sorted { a, b in
 				var aName = a.lastPathComponent
