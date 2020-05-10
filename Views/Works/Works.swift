@@ -15,7 +15,7 @@ struct Works: View {
 }
 
 private struct WorksListContainer: View {
-	@EnvironmentObject var dataModel: DataModel
+	@EnvironmentObject private var dataModel: DataModel
 
 	var body: some View {
 		Group {

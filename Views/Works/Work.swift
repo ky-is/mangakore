@@ -20,11 +20,11 @@ struct WorkProgressVolume: View {
 
 	var body: some View {
 		Text(progress.volume.description)
-			+
-			Text("/\(progress.work.volumes.count)")
-				.foregroundColor(.secondary)
-			+
-			Text("巻")
+		+
+		Text("/\(progress.work.volumes.count)")
+			.foregroundColor(.secondary)
+		+
+		Text("巻")
 	}
 }
 
