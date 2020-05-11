@@ -14,18 +14,20 @@ final class DefaultsSync: NSObject {
 			if let worksProgress = DataModel.shared.worksProgress {
 				let split = key.split(separator: "｜")
 				if split.count == 2 {
-					let workName = split[0], workKey = split[1]
+					let workName = split[0], progressKey = split[1]
 					for workProgress in worksProgress {
 						if workProgress.work.name == workName {
-							switch workKey {
-							case "page":
+							switch progressKey {
+							case "p":
 								workProgress.page = cloudDefaults.integer(forKey: key)
-							case "rating":
+							case "r":
 								workProgress.rating = cloudDefaults.integer(forKey: key)
-							case "volume":
+							case "v":
 								workProgress.volume = cloudDefaults.integer(forKey: key)
+							case "c":
+								workProgress.contiguous = cloudDefaults.bool(forKey: key)
 							default:
-								print("Unknown key", workKey)
+								print("Unknown key", progressKey)
 							}
 							break
 						}
