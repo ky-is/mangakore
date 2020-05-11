@@ -30,7 +30,7 @@ struct ReadingContiguous: View {
 	}
 
 	private func getScroll(from size: CGSize) -> CGFloat {
-		return size.height * 3
+		return size.height * 2
 	}
 
 	var body: some View {
@@ -52,6 +52,7 @@ struct ReadingContiguous: View {
 		}
 			.offset(y: savedOffset + dragOffset + initialOffset + internalOffset)
 			.frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
+			.contentShape(Rectangle())
 			.gesture(
 				DragGesture()
 					.updating($dragOffset) { value, state, transaction in
@@ -59,9 +60,17 @@ struct ReadingContiguous: View {
 					}
 					.onEnded { value in
 						self.savedOffset += self.getScroll(from: value.translation)
-						if self.progress.page < self.progress.currentVolume.pageCount {
+						let distance = -(self.savedOffset + self.dragOffset + initialOffset + self.internalOffset)
+						if distance < 0 {
+							if self.progress.page > 1 {
+								self.progress.page = self.progress.page - 1
+								self.updatePages()
+								if let newPage0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) {
+									self.internalOffset -= newPage0Height
+								}
+							}
+						} else if self.progress.page < self.progress.currentVolume.pageCount {
 							if let page1Height = self.page1Data.image?.height(scaledWidth: self.geometry.size.width) {
-								let distance = -(self.savedOffset + self.dragOffset + initialOffset + self.internalOffset)
 								let page0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) ?? self.geometry.size.height
 								if distance > page0Height + page1Height / 2 {
 									self.progress.page = self.progress.page + 1
