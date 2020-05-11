@@ -200,9 +200,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		244146992461D8FE008EAFDA /* manga kore */ = {
+		244146992461D8FE008EAFDA /* iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 244146AE2461D902008EAFDA /* Build configuration list for PBXNativeTarget "manga kore" */;
+			buildConfigurationList = 244146AE2461D902008EAFDA /* Build configuration list for PBXNativeTarget "iOS" */;
 			buildPhases = (
 				244146962461D8FE008EAFDA /* Sources */,
 				244146972461D8FE008EAFDA /* Frameworks */,
@@ -212,7 +212,7 @@
 			);
 			dependencies = (
 			);
-			name = "manga kore";
+			name = iOS;
 			productName = "manga kore";
 			productReference = 2441469A2461D8FE008EAFDA /* 漫画.app */;
 			productType = "com.apple.product-type.application";
@@ -245,7 +245,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				244146992461D8FE008EAFDA /* manga kore */,
+				244146992461D8FE008EAFDA /* iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -354,7 +354,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -408,7 +408,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -429,7 +429,6 @@
 				DEVELOPMENT_TEAM = P3YWQG9C86;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -452,7 +451,6 @@
 				DEVELOPMENT_TEAM = P3YWQG9C86;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -476,7 +474,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		244146AE2461D902008EAFDA /* Build configuration list for PBXNativeTarget "manga kore" */ = {
+		244146AE2461D902008EAFDA /* Build configuration list for PBXNativeTarget "iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				244146AF2461D902008EAFDA /* Debug */,
