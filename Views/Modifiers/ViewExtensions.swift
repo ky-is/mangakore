@@ -35,3 +35,9 @@ struct HiddenNavigationLink<Destination: View>: View {
 			.hidden()
 	}
 }
+
+final class HomeUIHostingController<Content: View>: UIHostingController<Content> {
+	override var prefersHomeIndicatorAutoHidden: Bool {
+		!UserSettings.shared.showUI
+	}
+}
