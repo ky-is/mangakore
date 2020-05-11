@@ -2,7 +2,7 @@ import Combine
 import Foundation
 
 private func getKey(for id: String, named: String) -> String {
-	return "\(id.prefix(20))｜\(named.first!)"
+	return "\(id.prefix(19))｜\(named.first!)"
 }
 
 final class WorkProgress: ObservableObject, Identifiable {
