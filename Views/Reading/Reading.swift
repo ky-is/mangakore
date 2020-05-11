@@ -26,6 +26,7 @@ struct Reading: View {
 					}
 						.popover(isPresented: $showVolumeList, attachmentAnchor: .point(.bottom), arrowEdge: .top) {
 							VolumeList(progress: self.progress)
+								.environmentObject(DataModel.shared)
 						}
 					NavigationEmojiButton("☯️") {
 						self.userSettings.invertContent = !self.userSettings.invertContent
@@ -49,6 +50,7 @@ struct Reading: View {
 private struct VolumeList: View {
 	@ObservedObject var progress: WorkProgress
 
+	@Environment(\.presentationMode) private var presentationMode
 	@EnvironmentObject private var dataModel: DataModel
 
 	var body: some View {
@@ -56,7 +58,7 @@ private struct VolumeList: View {
 		return List(progress.work.volumes) { volume in
 			Button(action: {
 				self.progress.volume = volume.id
-				self.dataModel.reading = nil
+				self.presentationMode.wrappedValue.dismiss()
 			}) {
 				HStack {
 					Text("✔︎")
