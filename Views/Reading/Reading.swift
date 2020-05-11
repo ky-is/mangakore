@@ -124,7 +124,7 @@ struct PageImage: View {
 	}
 
 	var body: some View {
-		CloudImage(page, width: geometry.size.width, height: geometry.size.height, contentMode: .fit)
+		CloudImage(page, priority: true, width: geometry.size.width, height: geometry.size.height, contentMode: .fit)
 			.colorInvert(userSettings.invertContent)
 			.scaleEffect(CGFloat(progress.magnification))
 			.modifier(PinchToZoom())

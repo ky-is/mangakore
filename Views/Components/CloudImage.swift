@@ -5,73 +5,95 @@ private enum CloudImageStatus {
 	case loading, success, error
 }
 
-private func getStatus(of url: URL?) -> CloudImageStatus {
-	guard let url = url else {
-		return .error
-	}
-	do {
-		let resources = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey, .ubiquitousItemIsDownloadingKey, .ubiquitousItemDownloadRequestedKey])
-		if let status = resources.ubiquitousItemDownloadingStatus {
-			switch status {
-			case .current:
-				if resources.ubiquitousItemIsDownloading == false {
-					return .success
-				}
-			case .notDownloaded:
-				if resources.ubiquitousItemDownloadRequested == false {
-					url.cache(true)
-				}
-			default:
-				break
+private final class CloudImageData: ObservableObject {
+	private let url: URL?
+
+	@Published var status: CloudImageStatus = .loading
+	@Published var image: UIImage? = nil
+
+	func updateStatus() {
+		DispatchQueue.global(qos: .userInteractive).async {
+			let status = self.getStatus()
+			let image = status == .success ? UIImage(contentsOfFile: self.url!.path) : nil
+			DispatchQueue.main.async {
+				self.status = status
+				self.image = image
 			}
 		}
-	} catch {
-		print("getStatus", error.localizedDescription)
-		return .error
 	}
-	return .loading
+
+	private func getStatus() -> CloudImageStatus {
+		guard let url = url else {
+			return .error
+		}
+		do {
+			let resources = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey, .ubiquitousItemIsDownloadingKey, .ubiquitousItemDownloadRequestedKey])
+			if let status = resources.ubiquitousItemDownloadingStatus {
+				switch status {
+				case .current:
+					if resources.ubiquitousItemIsDownloading == false {
+						return .success
+					}
+				case .notDownloaded:
+					if resources.ubiquitousItemDownloadRequested == false {
+						url.cache(true)
+					}
+				default:
+					break
+				}
+			}
+		} catch {
+			print("getStatus", error.localizedDescription)
+			return .error
+		}
+		return .loading
+	}
+
+	init(for url: URL?, priority: Bool) {
+		if let url = url, url.lastPathComponent.hasSuffix(".icloud") {
+			let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(7))
+			self.url = url.deletingLastPathComponent().appendingPathComponent(imageFileName)
+			updateStatus()
+		} else {
+			self.url = url
+			if priority {
+				self.status = getStatus()
+				self.image = UIImage(contentsOfFile: self.url!.path)
+			}
+		}
+	}
 }
 
 struct CloudImage: View {
-	let url: URL?
 	let width: CGFloat
 	let height: CGFloat
 	let contentMode: ContentMode
 	let alignment: Alignment?
 
-	@State private var status: CloudImageStatus = .loading
+	@ObservedObject private var data: CloudImageData
 
-	init(_ url: URL?, width: CGFloat, height: CGFloat, contentMode: ContentMode, alignment: Alignment? = nil) {
-		if let url = url, url.lastPathComponent.hasSuffix(".icloud") {
-			let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(7))
-			self.url = url.deletingLastPathComponent().appendingPathComponent(imageFileName)
-		} else {
-			self.url = url
-		}
+	init(_ url: URL?, priority: Bool, width: CGFloat, height: CGFloat, contentMode: ContentMode, alignment: Alignment? = nil) {
 		self.width = width
 		self.height = height
 		self.contentMode = contentMode
 		self.alignment = alignment
+		self.data = CloudImageData(for: url, priority: priority)
 	}
 
 	var body: some View {
-		let status = getStatus(of: url)
-		if status != self.status { //TODO investigate why this happens
-//			print("Mismatch", status, self.status)
-		}
-		return Group {
-			if status == .success {
-				Image(uiImage: UIImage(contentsOfFile: url!.path)!)
+		Group {
+			if data.image != nil {
+				Image(uiImage: data.image!)
 					.resizable()
 					.aspectRatio(contentMode: contentMode)
 					.frame(width: width, height: height, alignment: alignment ?? .center)
 					.clipped()
-			} else if status == .loading {
-				LoadingCloudImage(status: status, width: width, height: height) { _ in
-					self.status = getStatus(of: self.url)
+			} else if data.status == .error {
+				InvalidCloudImage(status: data.status, width: width, height: height)
+			} else {
+				LoadingCloudImage(status: data.status, width: width, height: height) { _ in
+					self.data.updateStatus()
 				}
-			} else if status == .error {
-				InvalidCloudImage(status: status, width: width, height: height)
 			}
 		}
 	}
@@ -104,6 +126,6 @@ private struct InvalidCloudImage: View {
 
 struct CloudImage_Previews: PreviewProvider {
 	static var previews: some View {
-		CloudImage(nil, width: 128, height: 128, contentMode: .fit)
+		CloudImage(nil, priority: true, width: 128, height: 128, contentMode: .fit)
 	}
 }
