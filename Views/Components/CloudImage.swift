@@ -38,12 +38,12 @@ struct CloudImage: View {
 
 extension CloudImage {
 	enum Status {
-		case loading, success, error
+		case downloading, reading, success, error
 	}
 
 	final class Data: ObservableObject {
 		@Published var url: URL?
-		@Published var status: Status = .loading
+		@Published var status: Status = .reading
 		@Published var image: UIImage? = nil
 
 		func updateStatus() {
@@ -73,6 +73,7 @@ extension CloudImage {
 						if resources.ubiquitousItemDownloadRequested == false {
 							url.cache(true)
 						}
+						return .downloading
 					default:
 						break
 					}
@@ -81,11 +82,11 @@ extension CloudImage {
 				print("getStatus", error.localizedDescription)
 				return .error
 			}
-			return .loading
+			return .reading
 		}
 
 		func updateURL(_ url: URL?, priority: Bool) {
-			status = .loading
+			status = .reading
 			image = nil
 			if let url = url, url.lastPathComponent.hasSuffix(".icloud") {
 				let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(7))
@@ -129,9 +130,9 @@ private struct InvalidCloudImage: View {
 	let defaultHeight: CGFloat?
 
 	var body: some View {
-		Text(status == .error ? "✕" : "⋯")
+		Text(status == .downloading ? "☁️" : (status == .error ? "❌" : "⋯"))
 			.font(.largeTitle)
-			.frame(height: defaultHeight)
+			.frame(maxWidth: .infinity, maxHeight: defaultHeight ?? .infinity)
 	}
 }
 
