@@ -12,7 +12,7 @@ struct ReadingUI: View {
 		let pageWidthRange: ClosedRange<CGFloat> = 40...128
 		let advancePageWidth = pageWidthRange.clamp(geometry.size.width * 0.15)
 		return Group {
-			ReadingPageToggle(hasInteracted: $hasInteracted) {
+			ReadingPageToggle(width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted) {
 				if self.progress.page < self.progress.currentVolume.pageCount {
 					self.progress.page = self.progress.page + 1
 				} else if self.progress.volume < self.progress.work.volumes.count {
@@ -21,16 +21,14 @@ struct ReadingUI: View {
 					self.dataModel.reading = nil
 				}
 			}
-				.frame(width: advancePageWidth, height: geometry.size.height)
 				.position(x: 0 + advancePageWidth / 2, y: geometry.size.height / 2)
-			ReadingPageToggle(hasInteracted: $hasInteracted) {
+			ReadingPageToggle(width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted) {
 				if self.progress.page > 1 {
 					self.progress.page = self.progress.page - 1
 				} else if self.progress.volume > 1 {
 					self.progress.volume = self.progress.volume - 1
 				}
 			}
-				.frame(width: advancePageWidth, height: geometry.size.height)
 				.position(x: geometry.size.width - advancePageWidth / 2, y: geometry.size.height / 2)
 			if userSettings.showUI {
 				ReadingBar(geometry: geometry, progress: progress)
@@ -40,8 +38,12 @@ struct ReadingUI: View {
 }
 
 private struct ReadingPageToggle: View {
+	let width: CGFloat
+	let height: CGFloat
 	@Binding var hasInteracted: Bool
 	let callback: () -> Void
+
+	private let yInset: CGFloat = 44
 
 	var body: some View {
 		Rectangle()
@@ -53,6 +55,7 @@ private struct ReadingPageToggle: View {
 				}
 				self.callback()
 			}
+			.frame(width: width, height: height - yInset * 2)
 	}
 }
 
