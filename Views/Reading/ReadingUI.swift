@@ -15,9 +15,9 @@ struct ReadingUI: View {
 			if !progress.contiguous {
 				ReadingPageToggle(width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted) {
 					if self.progress.page < self.progress.currentVolume.pageCount {
-						self.progress.page = self.progress.page + 1
+						self.progress.page = self.progress.page + 1  //TODO += 1 didSet not called
 					} else if self.progress.volume < self.progress.work.volumes.count {
-						self.progress.volume = self.progress.volume + 1
+						self.progress.volume = self.progress.volume + 1  //TODO += 1 didSet not called
 					} else {
 						self.dataModel.reading = nil
 					}

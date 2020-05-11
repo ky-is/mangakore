@@ -42,8 +42,7 @@ struct ReadingContiguous: View {
 				CloudImage(page2Data, contentMode: .fill, defaultHeight: geometry.size.height)
 			} else {
 				Button(action: {
-					self.progress.volume = self.progress.volume + 1
-//					self.progress.volume += 1 //TODO not working
+					self.progress.volume = self.progress.volume + 1 //TODO += 1 didSet not called
 				}) {
 					Text("次章")
 						.font(Font.title.bold())
@@ -65,7 +64,7 @@ struct ReadingContiguous: View {
 								let distance = -(self.savedOffset + self.dragOffset + initialOffset + self.internalOffset)
 								let page0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) ?? self.geometry.size.height
 								if distance > page0Height + page1Height / 2 {
-									self.progress.page += 1
+									self.progress.page = self.progress.page + 1
 									self.internalOffset += page0Height + initialOffset
 									self.updatePages()
 								}
