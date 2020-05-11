@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 extension Collection {
 	subscript(safe index: Index) -> Element? {
@@ -27,5 +28,11 @@ extension ClosedRange {
 extension NSUbiquitousKeyValueStore {
 	func integer(forKey key: String) -> Int {
 		return Int(longLong(forKey: key))
+	}
+}
+
+extension UIImage {
+	func height(scaledWidth: CGFloat) -> CGFloat {
+		return size.height * (scaledWidth / size.width)
 	}
 }

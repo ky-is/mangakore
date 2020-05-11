@@ -10,8 +10,10 @@ struct WorkIcon: View {
 	}
 
 	var body: some View {
-		CloudImage(url, priority: false, width: size, height: size, contentMode: .fill, alignment: .topLeading)
+		CloudImage(url, priority: false, contentMode: .fill)
+			.frame(width: size, height: size, alignment: .topLeading)
 			.background(Color.gray)
+			.clipped()
 	}
 }
 
@@ -24,7 +26,7 @@ struct WorkProgressVolume: View {
 		Text("/\(progress.work.volumes.count)")
 			.foregroundColor(.secondary)
 		+
-		Text("巻")
+		Text(progress.contiguous ? "章" : "巻")
 	}
 }
 

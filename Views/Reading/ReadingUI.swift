@@ -12,24 +12,26 @@ struct ReadingUI: View {
 		let pageWidthRange: ClosedRange<CGFloat> = 40...128
 		let advancePageWidth = pageWidthRange.clamp(geometry.size.width * 0.15)
 		return Group {
-			ReadingPageToggle(width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted) {
-				if self.progress.page < self.progress.currentVolume.pageCount {
-					self.progress.page = self.progress.page + 1
-				} else if self.progress.volume < self.progress.work.volumes.count {
-					self.progress.volume = self.progress.volume + 1
-				} else {
-					self.dataModel.reading = nil
+			if !progress.contiguous {
+				ReadingPageToggle(width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted) {
+					if self.progress.page < self.progress.currentVolume.pageCount {
+						self.progress.page = self.progress.page + 1
+					} else if self.progress.volume < self.progress.work.volumes.count {
+						self.progress.volume = self.progress.volume + 1
+					} else {
+						self.dataModel.reading = nil
+					}
 				}
-			}
-				.position(x: 0 + advancePageWidth / 2, y: geometry.size.height / 2)
-			ReadingPageToggle(width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted) {
-				if self.progress.page > 1 {
-					self.progress.page = self.progress.page - 1
-				} else if self.progress.volume > 1 {
-					self.progress.volume = self.progress.volume - 1
+					.position(x: 0 + advancePageWidth / 2, y: geometry.size.height / 2)
+				ReadingPageToggle(width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted) {
+					if self.progress.page > 1 {
+						self.progress.page = self.progress.page - 1
+					} else if self.progress.volume > 1 {
+						self.progress.volume = self.progress.volume - 1
+					}
 				}
+					.position(x: geometry.size.width - advancePageWidth / 2, y: geometry.size.height / 2)
 			}
-				.position(x: geometry.size.width - advancePageWidth / 2, y: geometry.size.height / 2)
 			if userSettings.showUI {
 				ReadingBar(geometry: geometry, progress: progress)
 			}

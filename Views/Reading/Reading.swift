@@ -93,7 +93,15 @@ private struct ReadingPage: View {
 							Text("Please check the folder in iCloud and try again.")
 						}
 					} else {
-						PageImage(pages: pages, progress: self.progress, geometry: geometry)
+						Group {
+							if self.progress.contiguous {
+								ReadingContiguous(pages: pages, progress: self.progress, geometry: geometry)
+							} else {
+								ReadingPaginated(pages: pages, progress: self.progress, geometry: geometry)
+							}
+						}
+							.colorInvert(self.userSettings.invertContent)
+							.scaleEffect(CGFloat(self.progress.magnification))
 					}
 				}
 					.onTapGesture {
@@ -105,31 +113,6 @@ private struct ReadingPage: View {
 				ReadingUI(geometry: geometry, progress: self.progress, hasInteracted: self.$hasInteracted)
 			}
 		}
-	}
-}
-
-struct PageImage: View {
-	let page: URL
-	@ObservedObject var progress: WorkProgress
-	let geometry: GeometryProxy
-
-	@ObservedObject private var userSettings = UserSettings.shared
-
-	init(pages: [URL], progress: WorkProgress, geometry: GeometryProxy) {
-		let pageIndex = max(1, progress.page) - 1
-		self.page = pages[pageIndex]
-		self.progress = progress
-		self.geometry = geometry
-
-		self.page.cache(true)
-		pages[safe: pageIndex + 1]?.cache(true)
-	}
-
-	var body: some View {
-		CloudImage(page, priority: true, width: geometry.size.width, height: geometry.size.height, contentMode: .fit)
-			.colorInvert(userSettings.invertContent)
-			.scaleEffect(CGFloat(progress.magnification))
-			.modifier(PinchToZoom())
 	}
 }
 
