@@ -41,7 +41,7 @@ struct WorkProgressPage: View {
 	}
 }
 
-struct Work_Previews: PreviewProvider {
+struct WorkEntry_Previews: PreviewProvider {
 	static let sampleWork = Work(FileManager.default.url(forUbiquityContainerIdentifier: nil)!)!
 
 	static var previews: some View {

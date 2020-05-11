@@ -15,7 +15,7 @@
 		244146AA2461D902008EAFDA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 244146A82461D902008EAFDA /* LaunchScreen.storyboard */; };
 		244146B92461E0A0008EAFDA /* CloudContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244146B82461E0A0008EAFDA /* CloudContainer.swift */; };
 		244146BB2461EB1D008EAFDA /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244146BA2461EB1D008EAFDA /* DataModel.swift */; };
-		24440F3724633BEC008AA5AF /* Work.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3424633BEC008AA5AF /* Work.swift */; };
+		24440F3724633BEC008AA5AF /* WorkEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3424633BEC008AA5AF /* WorkEntry.swift */; };
 		24440F3824633BEC008AA5AF /* Works.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3524633BEC008AA5AF /* Works.swift */; };
 		24440F3924633BEC008AA5AF /* Reading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24440F3624633BEC008AA5AF /* Reading.swift */; };
 		24515B5024635B3400C3D31A /* PinchToZoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24515B4F24635B3400C3D31A /* PinchToZoom.swift */; };
@@ -26,6 +26,7 @@
 		248027F7246500450004230F /* NavigationButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 248027F6246500450004230F /* NavigationButtons.swift */; };
 		2482C41724623FE000A96EE5 /* WorkProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482C41624623FE000A96EE5 /* WorkProgress.swift */; };
 		2482C41A2462478500A96EE5 /* DefaultsSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2482C4192462478500A96EE5 /* DefaultsSync.swift */; };
+		24A996882469BEF800E66B2D /* Work.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24A996872469BEF800E66B2D /* Work.swift */; };
 		24C5E74A24626B0100D980F2 /* CloudImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C5E74924626B0100D980F2 /* CloudImage.swift */; };
 		24EB5589246365B300F8CB11 /* VisualEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24EB5588246365B300F8CB11 /* VisualEffect.swift */; };
 		24EB558B24636F5A00F8CB11 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24EB558A24636F5A00F8CB11 /* ViewExtensions.swift */; };
@@ -43,7 +44,7 @@
 		244146B62461DD97008EAFDA /* manga kore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "manga kore.entitlements"; sourceTree = "<group>"; };
 		244146B82461E0A0008EAFDA /* CloudContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudContainer.swift; sourceTree = "<group>"; };
 		244146BA2461EB1D008EAFDA /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
-		24440F3424633BEC008AA5AF /* Work.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Work.swift; sourceTree = "<group>"; };
+		24440F3424633BEC008AA5AF /* WorkEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkEntry.swift; sourceTree = "<group>"; };
 		24440F3524633BEC008AA5AF /* Works.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Works.swift; sourceTree = "<group>"; };
 		24440F3624633BEC008AA5AF /* Reading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reading.swift; sourceTree = "<group>"; };
 		24515B4F24635B3400C3D31A /* PinchToZoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchToZoom.swift; sourceTree = "<group>"; };
@@ -54,6 +55,7 @@
 		248027F6246500450004230F /* NavigationButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationButtons.swift; sourceTree = "<group>"; };
 		2482C41624623FE000A96EE5 /* WorkProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkProgress.swift; sourceTree = "<group>"; };
 		2482C4192462478500A96EE5 /* DefaultsSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsSync.swift; sourceTree = "<group>"; };
+		24A996872469BEF800E66B2D /* Work.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Work.swift; sourceTree = "<group>"; };
 		24C5E74924626B0100D980F2 /* CloudImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudImage.swift; sourceTree = "<group>"; };
 		24EB5588246365B300F8CB11 /* VisualEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffect.swift; sourceTree = "<group>"; };
 		24EB558A24636F5A00F8CB11 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				244146B82461E0A0008EAFDA /* CloudContainer.swift */,
+				24A996872469BEF800E66B2D /* Work.swift */,
 				244146BA2461EB1D008EAFDA /* DataModel.swift */,
 			);
 			path = Drive;
@@ -184,7 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				24440F3524633BEC008AA5AF /* Works.swift */,
-				24440F3424633BEC008AA5AF /* Work.swift */,
+				24440F3424633BEC008AA5AF /* WorkEntry.swift */,
 			);
 			path = Works;
 			sourceTree = "<group>";
@@ -271,7 +274,7 @@
 				24C5E74A24626B0100D980F2 /* CloudImage.swift in Sources */,
 				248027F7246500450004230F /* NavigationButtons.swift in Sources */,
 				24EB5589246365B300F8CB11 /* VisualEffect.swift in Sources */,
-				24440F3724633BEC008AA5AF /* Work.swift in Sources */,
+				24440F3724633BEC008AA5AF /* WorkEntry.swift in Sources */,
 				2471021B2465D68D00958E2E /* ActionPopover.swift in Sources */,
 				24515B5024635B3400C3D31A /* PinchToZoom.swift in Sources */,
 				2441469E2461D8FE008EAFDA /* AppDelegate.swift in Sources */,
@@ -280,6 +283,7 @@
 				244146BB2461EB1D008EAFDA /* DataModel.swift in Sources */,
 				24EB558B24636F5A00F8CB11 /* ViewExtensions.swift in Sources */,
 				244146A22461D8FE008EAFDA /* ContentView.swift in Sources */,
+				24A996882469BEF800E66B2D /* Work.swift in Sources */,
 				24440F3924633BEC008AA5AF /* Reading.swift in Sources */,
 				248027D3246482000004230F /* Extensions.swift in Sources */,
 				2482C41A2462478500A96EE5 /* DefaultsSync.swift in Sources */,
