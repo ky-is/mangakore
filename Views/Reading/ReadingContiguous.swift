@@ -36,16 +36,17 @@ struct ReadingContiguous: View {
 	}
 
 	private func getScroll(from size: CGSize) -> CGFloat {
-		return size.height * 2
+		return size.height * 3
 	}
 
 	var body: some View {
 		let initialOffset = page0Data.url == nil ? -geometry.size.height : 0
+		let screenHeight = geometry.size.height
 		return VStack(spacing: 0) {
-			CloudImage(page0Data, contentMode: .fill, defaultHeight: geometry.size.height)
-			CloudImage(page1Data, contentMode: .fill, defaultHeight: geometry.size.height)
+			CloudImage(page0Data, contentMode: .fill, defaultHeight: screenHeight)
+			CloudImage(page1Data, contentMode: .fill, defaultHeight: screenHeight)
 			if page2Data.url != nil {
-				CloudImage(page2Data, contentMode: .fill, defaultHeight: geometry.size.height)
+				CloudImage(page2Data, contentMode: .fill, defaultHeight: screenHeight)
 			} else {
 				Button(action: {
 					self.progress.volume = self.progress.volume + 1 //TODO += 1 didSet not called
@@ -53,11 +54,11 @@ struct ReadingContiguous: View {
 					Text("次章")
 						.font(Font.title.bold())
 				}
-					.frame(width: geometry.size.width, height: geometry.size.height / 2)
+					.frame(width: geometry.size.width, height: screenHeight / 2)
 			}
 		}
 			.offset(y: savedOffset + dragOffset + initialOffset + internalOffset)
-			.frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
+			.frame(width: geometry.size.width, height: screenHeight, alignment: .top)
 			.contentShape(Rectangle())
 			.gesture(
 				DragGesture()
@@ -69,7 +70,7 @@ struct ReadingContiguous: View {
 						self.savedOffset += newOffset
 						let distance = -(self.savedOffset + self.dragOffset + initialOffset + self.internalOffset)
 						if newOffset > 0 { // Scrolled up
-							if distance < self.geometry.size.height && self.progress.page > 1 {
+							if distance < screenHeight && self.progress.page > 1 {
 								self.progress.page = self.progress.page - 1
 								self.updatePages(update: true)
 								if let newPage0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) {
@@ -77,10 +78,14 @@ struct ReadingContiguous: View {
 								}
 							}
 						} else { // Scrolled down
-							if self.progress.page < self.progress.currentVolume.pageCount {
-								if let page1Height = self.page1Data.image?.height(scaledWidth: self.geometry.size.width) {
-									let page0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) ?? self.geometry.size.height
-									if distance > page0Height + page1Height / 2 {
+							if let page1Height = self.page1Data.image?.height(scaledWidth: self.geometry.size.width) {
+								let page0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) ?? screenHeight
+								let willAdvanceVolume = self.progress.page >= self.progress.currentVolume.pageCount
+								let threshold = page0Height + (willAdvanceVolume ? page1Height - screenHeight / 2 : page1Height / 2)
+								if distance > threshold {
+									if willAdvanceVolume {
+										self.progress.volume = self.progress.volume + 1
+									} else {
 										self.progress.page = self.progress.page + 1
 										self.internalOffset += page0Height + initialOffset
 										self.updatePages(update: true)
