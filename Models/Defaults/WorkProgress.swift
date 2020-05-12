@@ -3,7 +3,7 @@ import Foundation
 import ImageIO
 
 private func getKey(for id: String, named: String) -> String {
-	return "\(id.prefix(19))｜\(named.first!)"
+	return "\(id)｜\(named.first!)"
 }
 
 final class WorkProgress: ObservableObject, Identifiable {

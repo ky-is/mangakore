@@ -9,14 +9,14 @@ final class DefaultsSync: NSObject {
 		guard let newKeys = notification.userInfo?[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String] else {
 			return print(NSUbiquitousKeyValueStoreChangedKeysKey, "Invalid userInfo", notification.userInfo ?? "nil")
 		}
-		let cloudDefaults = NSUbiquitousKeyValueStore.default
-		for key in newKeys {
-			if let worksProgress = DataModel.shared.worksProgress {
+		if let worksProgress = DataModel.shared.worksProgress {
+			let cloudDefaults = NSUbiquitousKeyValueStore.default
+			for key in newKeys {
 				let split = key.split(separator: "｜")
 				if split.count == 2 {
-					let workName = split[0], progressKey = split[1]
+					let workID = split[0], progressKey = split[1]
 					for workProgress in worksProgress {
-						if workProgress.work.name == workName {
+						if workProgress.work.id == workID {
 							switch progressKey {
 							case "p":
 								workProgress.page = cloudDefaults.integer(forKey: key)

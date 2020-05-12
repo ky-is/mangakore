@@ -72,7 +72,7 @@ struct Work {
 			}
 			self.volumes = volumesAccumulator
 		}
-		self.id = root.lastPathComponent.lowercased().filter { !$0.isWhitespace }
+		self.id = String(root.lastPathComponent.lowercased().filter({ !$0.isWhitespace }).prefix(19))
 		self.name = root.lastPathComponent
 		self.root = root
 	}
