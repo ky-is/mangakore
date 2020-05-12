@@ -7,7 +7,7 @@ struct Works: View {
 	var body: some View {
 		NavigationView {
 			WorksListContainer()
-				.navigationBarTitle("漫画")
+				.navigationBarTitle("漫画コレ")
 		}
 			.navigationViewStyle(StackNavigationViewStyle())
 			.statusBar(hidden: !userSettings.showUI)
@@ -64,21 +64,21 @@ private struct WorksList: View {
 	var body: some View {
 		List {
 			if !reading.isEmpty {
-				Section(header: Text("Reading")) {
+				Section(header: Text("読中")) {
 					ForEach(reading) {
 						WorksEntry(progress: $0)
 					}
 				}
 			}
 			if !unread.isEmpty {
-				Section(header: Text("Unread")) {
+				Section(header: Text("未読")) {
 					ForEach(unread) {
 						WorksEntry(progress: $0)
 					}
 				}
 			}
 			if !finished.isEmpty {
-				Section(header: Text("Finished")) {
+				Section(header: Text("読破")) {
 					ForEach(finished) {
 						WorksEntry(progress: $0)
 					}

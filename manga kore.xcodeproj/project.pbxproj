@@ -37,7 +37,7 @@
 /* Begin PBXFileReference section */
 		2411D1D22469CD540006CC12 /* ReadingPaginated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingPaginated.swift; sourceTree = "<group>"; };
 		2411D1D42469CDE90006CC12 /* ReadingContiguous.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingContiguous.swift; sourceTree = "<group>"; };
-		2441469A2461D8FE008EAFDA /* 漫画.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "漫画.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2441469A2461D8FE008EAFDA /* 漫画コレ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "漫画コレ.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2441469D2461D8FE008EAFDA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2441469F2461D8FE008EAFDA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		244146A12461D8FE008EAFDA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -90,7 +90,7 @@
 		2441469B2461D8FE008EAFDA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2441469A2461D8FE008EAFDA /* 漫画.app */,
+				2441469A2461D8FE008EAFDA /* 漫画コレ.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -223,7 +223,7 @@
 			);
 			name = iOS;
 			productName = "manga kore";
-			productReference = 2441469A2461D8FE008EAFDA /* 漫画.app */;
+			productReference = 2441469A2461D8FE008EAFDA /* 漫画コレ.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -446,7 +446,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "is.ky.manga-kore";
-				PRODUCT_NAME = "漫画";
+				PRODUCT_NAME = "漫画コレ";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -468,7 +468,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "is.ky.manga-kore";
-				PRODUCT_NAME = "漫画";
+				PRODUCT_NAME = "漫画コレ";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

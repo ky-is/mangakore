@@ -24,7 +24,7 @@
             </objects>
             <point key="canvasLocation" x="52.173913043478265" y="375"/>
         </scene>
-        <!--漫画-->
+        <!--漫画コレ-->
         <scene sceneID="FGW-Ih-HUh">
             <objects>
                 <tableViewController id="1Ky-Jq-DP5" sceneMemberID="viewController">
@@ -76,7 +76,7 @@
                             <outlet property="delegate" destination="1Ky-Jq-DP5" id="PzI-AL-MDg"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="漫画" id="zjZ-8Q-oHF"/>
+                    <navigationItem key="navigationItem" title="漫画コレ" id="zjZ-8Q-oHF"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JwH-ya-e4I" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
