@@ -139,10 +139,11 @@ private struct WorksEntry: View {
 						Circle()
 							.fill(Color.gray.opacity(0.5))
 					)
-					.padding()
 			}
 				.buttonStyle(BorderlessButtonStyle())
+				.frame(width: 44, height: 44)
 		}
+			.listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 0))
 			.accentColor(.primary)
 	}
 }
