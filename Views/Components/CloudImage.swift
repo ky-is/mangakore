@@ -26,9 +26,9 @@ struct CloudImage: View {
 					.resizable()
 					.aspectRatio(contentMode: contentMode)
 			} else if data.status == .error {
-				InvalidCloudImage(status: data.status, defaultHeight: defaultHeight)
+				CloudImageInvalid(status: data.status, defaultHeight: defaultHeight)
 			} else {
-				LoadingCloudImage(status: data.status, defaultHeight: defaultHeight) { _ in
+				CloudImageLoading(status: data.status, defaultHeight: defaultHeight) { _ in
 					self.data.updateStatus()
 				}
 			}
@@ -49,7 +49,7 @@ extension CloudImage {
 		func updateStatus() {
 			DispatchQueue.global(qos: .userInteractive).async {
 				let status = self.getStatus()
-				let image = status == .success ? UIImage(contentsOfFile: self.url!.path) : nil
+				let image = status == .success || status == .downloading ? UIImage(contentsOfFile: self.url!.path) : nil
 				DispatchQueue.main.async {
 					self.status = status
 					self.image = image
@@ -112,7 +112,7 @@ extension CloudImage {
 	}
 }
 
-private struct LoadingCloudImage: View {
+private struct CloudImageLoading: View {
 	let status: CloudImage.Status
 	let defaultHeight: CGFloat?
 	let callback: (Any) -> Void
@@ -120,12 +120,12 @@ private struct LoadingCloudImage: View {
 	private let timer = Timer.publish(every: 0.1, on: RunLoop.main, in: .default).autoconnect()
 
 	var body: some View {
-		InvalidCloudImage(status: status, defaultHeight: defaultHeight)
+		CloudImageInvalid(status: status, defaultHeight: defaultHeight)
 			.onReceive(timer, perform: callback)
 	}
 }
 
-private struct InvalidCloudImage: View {
+private struct CloudImageInvalid: View {
 	let status: CloudImage.Status
 	let defaultHeight: CGFloat?
 
