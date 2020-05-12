@@ -2,7 +2,7 @@ import Foundation
 
 final class DefaultsSync: NSObject {
 	static func observe() {
-		NotificationCenter.default.addObserver(forName: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: nil, queue: nil, using: updateUserDefaultsFromCloud(notification:))
+		NotificationCenter.default.addObserver(forName: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: nil, queue: OperationQueue(), using: updateUserDefaultsFromCloud(notification:))
 	}
 
 	static func updateUserDefaultsFromCloud(notification: Notification) {
@@ -17,17 +17,19 @@ final class DefaultsSync: NSObject {
 					let workID = split[0], progressKey = split[1]
 					for workProgress in worksProgress {
 						if workProgress.work.id == workID {
-							switch progressKey {
-							case "p":
-								workProgress.page = cloudDefaults.integer(forKey: key)
-							case "r":
-								workProgress.rating = cloudDefaults.integer(forKey: key)
-							case "v":
-								workProgress.volume = cloudDefaults.integer(forKey: key)
-							case "c":
-								workProgress.contiguous = cloudDefaults.bool(forKey: key)
-							default:
-								print("Unknown key", progressKey)
+							DispatchQueue.main.async {
+								switch progressKey {
+								case "p":
+									workProgress.page = cloudDefaults.integer(forKey: key)
+								case "r":
+									workProgress.rating = cloudDefaults.integer(forKey: key)
+								case "v":
+									workProgress.volume = cloudDefaults.integer(forKey: key)
+								case "c":
+									workProgress.contiguous = cloudDefaults.bool(forKey: key)
+								default:
+									print("Unknown key", progressKey)
+								}
 							}
 							break
 						}
