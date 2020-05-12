@@ -54,6 +54,7 @@ private struct ReadingPageToggle: View {
 			.onTapGesture {
 				if !self.hasInteracted {
 					UserSettings.shared.showUI = false
+					self.hasInteracted = true
 				}
 				self.callback()
 			}

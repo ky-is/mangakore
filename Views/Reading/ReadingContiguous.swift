@@ -4,6 +4,7 @@ struct ReadingContiguous: View {
 	let pageURLs: [URL]
 	@ObservedObject var progress: WorkProgress
 	let geometry: GeometryProxy
+	@Binding var hasInteracted: Bool
 
 	@State private var savedOffset: CGFloat = 0
 	@State private var internalOffset: CGFloat = 0
@@ -13,10 +14,11 @@ struct ReadingContiguous: View {
 	@ObservedObject private var page1Data = CloudImage.Data()
 	@ObservedObject private var page2Data = CloudImage.Data()
 
-	init(pages: [URL], progress: WorkProgress, geometry: GeometryProxy) {
+	init(pages: [URL], progress: WorkProgress, geometry: GeometryProxy, hasInteracted: Binding<Bool>) {
 		self.pageURLs = pages
 		self.progress = progress
 		self.geometry = geometry
+		self._hasInteracted = hasInteracted
 		updatePages(update: false)
 		progress.currentVolume.cache(true)
 	}
@@ -27,6 +29,10 @@ struct ReadingContiguous: View {
 		page0Data.updateURL(previousPageURL, priority: true)
 		page1Data.updateURL(pageURLs[safe: pageIndex + 0], priority: true)
 		page2Data.updateURL(pageURLs[safe: pageIndex + 1], priority: true)
+		if update && !hasInteracted {
+			hasInteracted = true
+			UserSettings.shared.showUI = false
+		}
 	}
 
 	private func getScroll(from size: CGSize) -> CGFloat {

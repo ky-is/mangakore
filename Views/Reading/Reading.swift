@@ -95,7 +95,7 @@ private struct ReadingPage: View {
 					} else {
 						Group {
 							if self.progress.contiguous {
-								ReadingContiguous(pages: pages, progress: self.progress, geometry: geometry)
+								ReadingContiguous(pages: pages, progress: self.progress, geometry: geometry, hasInteracted: self.$hasInteracted)
 							} else {
 								ReadingPaginated(pages: pages, progress: self.progress, geometry: geometry)
 							}
