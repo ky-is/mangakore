@@ -20,6 +20,9 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 
 	@Published var volume: Int {
 		didSet {
+			guard volume != oldValue else {
+				return
+			}
 			sync(value: volume)
 			page = 1
 			work.volumes[safe: oldValue]?.cache(false)
@@ -29,6 +32,9 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 
 	@Published var page: Int {
 		didSet {
+			guard page != oldValue else {
+				return
+			}
 			sync(value: page)
 			DataModel.shared.markAsUpdated()
 		}
@@ -36,6 +42,9 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 
 	@Published var rating: Int {
 		didSet {
+			guard rating != oldValue else {
+				return
+			}
 			sync(value: rating)
 		}
 	}

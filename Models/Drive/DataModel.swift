@@ -11,10 +11,11 @@ final class DataModel: ObservableObject {
 
 	@Published var reading: WorkProgress? = nil {
 		didSet {
-			if reading != oldValue {
-				NSUbiquitousKeyValueStore.default.set(reading?.work.id, forKey: NSUbiquitousKeyValueStore.savedWorkIDKey)
-				objectWillChange.send()
+			guard reading != oldValue else {
+				return
 			}
+			NSUbiquitousKeyValueStore.default.set(reading?.work.id, forKey: NSUbiquitousKeyValueStore.savedWorkIDKey)
+			objectWillChange.send()
 		}
 	}
 
