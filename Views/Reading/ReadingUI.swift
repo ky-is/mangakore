@@ -72,9 +72,9 @@ private struct ReadingBar: View {
 			HStack(spacing: 0) {
 				Spacer()
 				Group {
-					WorkProgressPage(progress: progress)
-					Text("　")
 					WorkProgressVolume(progress: progress)
+					Text("　")
+					WorkProgressPage(progress: progress)
 				}
 				Spacer()
 				Group {

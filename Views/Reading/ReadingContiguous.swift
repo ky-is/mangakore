@@ -68,7 +68,7 @@ struct ReadingContiguous: View {
 						let newOffset = self.getScroll(from: value.translation)
 						self.savedOffset += newOffset
 						let distance = -(self.savedOffset + self.dragOffset + initialOffset + self.internalOffset)
-						if newOffset > 0 { // Scroll up
+						if newOffset > 0 { // Scrolled up
 							if distance < self.geometry.size.height && self.progress.page > 1 {
 								self.progress.page = self.progress.page - 1
 								self.updatePages(update: true)
@@ -76,7 +76,7 @@ struct ReadingContiguous: View {
 									self.internalOffset -= newPage0Height
 								}
 							}
-						} else { // Scroll down
+						} else { // Scrolled down
 							if self.progress.page < self.progress.currentVolume.pageCount {
 								if let page1Height = self.page1Data.image?.height(scaledWidth: self.geometry.size.width) {
 									let page0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) ?? self.geometry.size.height
