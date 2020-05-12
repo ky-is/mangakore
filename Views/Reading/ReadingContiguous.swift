@@ -17,11 +17,11 @@ struct ReadingContiguous: View {
 		self.pageURLs = pages
 		self.progress = progress
 		self.geometry = geometry
-		updatePages()
+		updatePages(update: false)
 		progress.currentVolume.cache(true)
 	}
 
-	private func updatePages() {
+	private func updatePages(update: Bool) {
 		let pageIndex = max(1, progress.page) - 1
 		let previousPageURL = pageURLs[safe: pageIndex - 1]
 		page0Data.updateURL(previousPageURL, priority: true)
@@ -59,23 +59,26 @@ struct ReadingContiguous: View {
 						state = self.getScroll(from: value.translation)
 					}
 					.onEnded { value in
-						self.savedOffset += self.getScroll(from: value.translation)
+						let newOffset = self.getScroll(from: value.translation)
+						self.savedOffset += newOffset
 						let distance = -(self.savedOffset + self.dragOffset + initialOffset + self.internalOffset)
-						if distance < 0 {
-							if self.progress.page > 1 {
+						if newOffset > 0 { // Scroll up
+							if distance < self.geometry.size.height && self.progress.page > 1 {
 								self.progress.page = self.progress.page - 1
-								self.updatePages()
+								self.updatePages(update: true)
 								if let newPage0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) {
 									self.internalOffset -= newPage0Height
 								}
 							}
-						} else if self.progress.page < self.progress.currentVolume.pageCount {
-							if let page1Height = self.page1Data.image?.height(scaledWidth: self.geometry.size.width) {
-								let page0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) ?? self.geometry.size.height
-								if distance > page0Height + page1Height / 2 {
-									self.progress.page = self.progress.page + 1
-									self.internalOffset += page0Height + initialOffset
-									self.updatePages()
+						} else { // Scroll down
+							if self.progress.page < self.progress.currentVolume.pageCount {
+								if let page1Height = self.page1Data.image?.height(scaledWidth: self.geometry.size.width) {
+									let page0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) ?? self.geometry.size.height
+									if distance > page0Height + page1Height / 2 {
+										self.progress.page = self.progress.page + 1
+										self.internalOffset += page0Height + initialOffset
+										self.updatePages(update: true)
+									}
 								}
 							}
 						}
