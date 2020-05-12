@@ -11,7 +11,7 @@ struct WorkIcon: View {
 
 	var body: some View {
 		CloudImage(url, priority: false, contentMode: .fill)
-			.frame(width: size, height: size, alignment: .topLeading)
+			.frame(size: size, alignment: .topLeading)
 			.background(Color.gray)
 			.clipped()
 	}

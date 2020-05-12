@@ -13,7 +13,7 @@ struct NavigationUnicodeButton: View {
 		Button(action: action) {
 			Text(label)
 				.font(Font.system(size: 28).weight(.light))
-				.frame(width: 40, height: 40)
+				.frame(size: 40)
 		}
 	}
 }
@@ -31,7 +31,7 @@ struct NavigationEmojiButton: View {
 		Button(action: action) {
 			Text(label)
 				.font(.system(size: 24))
-				.frame(width: 40, height: 40)
+				.frame(size: 40)
 		}
 	}
 }

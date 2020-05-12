@@ -98,7 +98,7 @@ struct ActionPopover {
 struct ActionPopover_Previews: PreviewProvider {
 	static var previews: some View {
 		Rectangle()
-			.frame(width: 32, height: 32)
+			.frame(size: 32)
 			.actionPopover(isPresented: .constant(true)) {
 				ActionPopover(title: Text("Test"), message: nil, accentColor: .primary, buttons: [
 					.default(Text("Default"), action: {}),

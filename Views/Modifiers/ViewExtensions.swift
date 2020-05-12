@@ -24,6 +24,10 @@ extension View {
 	func reload(on: Any?) -> some View {
 		self
 	}
+
+	func frame(size: CGFloat, alignment: Alignment = .center) -> some View {
+		frame(width: size, height: size, alignment: alignment)
+	}
 }
 
 struct HiddenNavigationLink<Destination: View>: View {

@@ -134,14 +134,14 @@ private struct WorksEntry: View {
 							.cancel(),
 						])
 					}
-					.frame(width: 28, height: 28)
+					.frame(size: 28)
 					.background(
 						Circle()
 							.fill(Color.gray.opacity(0.5))
 					)
 			}
 				.buttonStyle(BorderlessButtonStyle())
-				.frame(width: 44, height: 44)
+				.frame(size: 44)
 		}
 			.listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 0))
 			.accentColor(.primary)
