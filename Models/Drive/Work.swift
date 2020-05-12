@@ -40,7 +40,7 @@ struct Volume: Equatable, Identifiable {
 	}
 }
 
-struct Work {
+struct Work: Equatable {
 	let id: String
 	let name: String
 	let root: URL

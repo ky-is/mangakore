@@ -6,7 +6,11 @@ private func getKey(for id: String, named: String) -> String {
 	return "\(id)｜\(named.first!)"
 }
 
-final class WorkProgress: ObservableObject, Identifiable {
+final class WorkProgress: ObservableObject, Equatable, Identifiable {
+	static func == (lhs: WorkProgress, rhs: WorkProgress) -> Bool {
+		lhs.work == rhs.work
+	}
+
 	let work: Work
 
 	private func sync(value: Any?, name: String = #function) {
