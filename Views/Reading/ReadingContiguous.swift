@@ -43,18 +43,16 @@ struct ReadingContiguous: View {
 		let initialOffset = page0Data.url == nil ? -geometry.size.height : 0
 		let screenHeight = geometry.size.height
 		return VStack(spacing: 0) {
-			CloudImage(page0Data, contentMode: .fill, defaultHeight: screenHeight)
+			if progress.page > 1 {
+				CloudImage(page0Data, contentMode: .fill, defaultHeight: screenHeight)
+			} else {
+				AdvancePage(label: progress.volume > 1 ? "前章" : "未読", alignment: .bottom, geometry: geometry)
+			}
 			CloudImage(page1Data, contentMode: .fill, defaultHeight: screenHeight)
-			if page2Data.url != nil {
+			if progress.page < progress.currentVolume.images.count {
 				CloudImage(page2Data, contentMode: .fill, defaultHeight: screenHeight)
 			} else {
-				Button(action: {
-					self.progress.volume = self.progress.volume + 1 //TODO += 1 didSet not called
-				}) {
-					Text("次章")
-						.font(Font.title.bold())
-				}
-					.frame(width: geometry.size.width, height: screenHeight / 2)
+				AdvancePage(label: progress.volume < progress.work.volumes.count ? "次章" : "読破", alignment: .top, geometry: geometry)
 			}
 		}
 			.offset(y: savedOffset + dragOffset + initialOffset + internalOffset)
@@ -74,9 +72,7 @@ struct ReadingContiguous: View {
 							let threshold = willAdvanceVolume ? screenHeight / 2 : screenHeight
 							if distance < threshold {
 								self.progress.advancePage(forward: false)
-								if willAdvanceVolume {
-//									self.internalOffset = 0
-								} else {
+								if !willAdvanceVolume {
 									self.updatePages(update: true)
 									if let newPage0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) {
 										self.internalOffset -= newPage0Height
@@ -103,6 +99,21 @@ struct ReadingContiguous: View {
 				self.savedOffset = 0
 				self.internalOffset = 0
 			}
+	}
+}
+
+private struct AdvancePage: View {
+	let label: String
+	let alignment: Alignment
+	let geometry: GeometryProxy
+
+	var body: some View {
+		ZStack {
+			Text(label)
+				.font(Font.title.bold())
+				.frame(height: geometry.size.height / 2, alignment: alignment)
+		}
+			.frame(height: geometry.size.height)
 	}
 }
 
