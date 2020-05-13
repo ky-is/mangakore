@@ -36,11 +36,13 @@ struct Reading: View {
 			)
 			.navigationBarHidden(!userSettings.showUI)
 			.onAppear {
+				self.progress.startReading()
 				if self.progress.volume < 1 {
 					self.progress.volume = 1
 				}
 			}
 			.onDisappear {
+				self.progress.saveReadingTime(continuing: false)
 				self.userSettings.showUI = true
 				self.dataModel.reading = nil
 			}

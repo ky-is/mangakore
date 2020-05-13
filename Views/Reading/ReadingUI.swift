@@ -5,7 +5,6 @@ struct ReadingUI: View {
 	@ObservedObject var progress: WorkProgress
 	@Binding var hasInteracted: Bool
 
-	@EnvironmentObject private var dataModel: DataModel
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	var body: some View {
@@ -13,23 +12,9 @@ struct ReadingUI: View {
 		let advancePageWidth = pageWidthRange.clamp(geometry.size.width * 0.15)
 		return Group {
 			if !progress.contiguous {
-				ReadingPageToggle(width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted) {
-					if self.progress.page < self.progress.currentVolume.pageCount {
-						self.progress.page = self.progress.page + 1  //TODO += 1 didSet not called
-					} else if self.progress.volume < self.progress.work.volumes.count {
-						self.progress.volume = self.progress.volume + 1  //TODO += 1 didSet not called
-					} else {
-						self.dataModel.reading = nil
-					}
-				}
+				ReadingPageToggle(progress: progress, forward: true, width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted)
 					.position(x: 0 + advancePageWidth / 2, y: geometry.size.height / 2)
-				ReadingPageToggle(width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted) {
-					if self.progress.page > 1 {
-						self.progress.page = self.progress.page - 1
-					} else if self.progress.volume > 1 {
-						self.progress.volume = self.progress.volume - 1
-					}
-				}
+				ReadingPageToggle(progress: progress, forward: false, width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted)
 					.position(x: geometry.size.width - advancePageWidth / 2, y: geometry.size.height / 2)
 			}
 			if userSettings.showUI {
@@ -40,23 +25,24 @@ struct ReadingUI: View {
 }
 
 private struct ReadingPageToggle: View {
+	let progress: WorkProgress
+	let forward: Bool
 	let width: CGFloat
 	let height: CGFloat
 	@Binding var hasInteracted: Bool
-	let callback: () -> Void
 
 	private let yInset: CGFloat = 44
 
 	var body: some View {
 		Rectangle()
-			.fill(Color.clear) //TODO messes with ReadingBar blur
+			.fill(Color.clear)
 			.contentShape(Rectangle())
 			.onTapGesture {
 				if !self.hasInteracted {
 					UserSettings.shared.showUI = false
 					self.hasInteracted = true
 				}
-				self.callback()
+				self.progress.advancePage(forward: self.forward)
 			}
 			.frame(width: width, height: height - yInset * 2)
 	}
@@ -75,6 +61,8 @@ private struct ReadingBar: View {
 					WorkProgressVolume(progress: progress)
 					Text("　")
 					WorkProgressPage(progress: progress)
+//					Text("　") //SAMPLE
+//					Text(Int(progress.timeReading).description)
 				}
 				Spacer()
 				Group {

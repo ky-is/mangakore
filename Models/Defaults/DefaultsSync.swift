@@ -34,6 +34,8 @@ final class DefaultsSync: NSObject {
 								workProgress.volume = cloudDefaults.integer(forKey: key)
 							case "c":
 								workProgress.contiguous = cloudDefaults.bool(forKey: key)
+							case "t":
+								workProgress.timeReading = cloudDefaults.double(forKey: key)
 							default:
 								print("Unknown key", progressKey)
 							}

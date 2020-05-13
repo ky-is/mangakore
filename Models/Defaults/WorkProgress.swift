@@ -2,6 +2,8 @@ import Combine
 import Foundation
 import ImageIO
 
+private let maximumTimePerPage: TimeInterval = 60
+
 private func getKey(for id: String, named: String) -> String {
 	return "\(id)｜\(named.first!)"
 }
@@ -35,8 +37,29 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 			guard page != oldValue else {
 				return
 			}
+			if startedReadingAt > 0 {
+				saveReadingTime(continuing: true)
+			}
 			sync(value: page)
 			DataModel.shared.markAsUpdated()
+		}
+	}
+
+	func advancePage(forward: Bool) { //TODO += 1 didSet not called
+		if forward {
+			if page < currentVolume.pageCount {
+				page = page + 1
+			} else if volume < work.volumes.count {
+				volume = volume + 1
+			} else {
+				DataModel.shared.reading = nil
+			}
+		} else {
+			if page > 1 {
+				page = page - 1
+			} else if volume > 1 {
+				volume = volume - 1
+			}
 		}
 	}
 
@@ -46,6 +69,25 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 				return
 			}
 			sync(value: rating)
+		}
+	}
+
+	private var startedReadingAt: TimeInterval = .zero
+	func startReading() {
+		startedReadingAt = CFAbsoluteTimeGetCurrent()
+	}
+	func saveReadingTime(continuing: Bool) {
+		guard startedReadingAt > 0 else {
+			return print("Reading not started")
+		}
+		let currentTime = CFAbsoluteTimeGetCurrent()
+		let pageTime = min(maximumTimePerPage, currentTime - startedReadingAt)
+		timeReading = timeReading + pageTime
+		startedReadingAt = continuing ? currentTime : 0
+	}
+	@Published var timeReading: TimeInterval {
+		didSet {
+			sync(value: timeReading)
 		}
 	}
 
@@ -95,6 +137,7 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 		let magnification = store.double(forKey: getKey(for: id, named: "magnification"))
 		self.magnification = magnification > 0 ? magnification : 1
 		self._contiguous = store.object(forKey: getKey(for: id, named: "contiguous")) as? Bool
+		self.timeReading = store.double(forKey: getKey(for: id, named: "timeReading"))
 	}
 
 	var currentVolume: Volume {

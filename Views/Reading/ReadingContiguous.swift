@@ -70,11 +70,17 @@ struct ReadingContiguous: View {
 						self.savedOffset += newOffset
 						let distance = -(self.savedOffset + self.dragOffset + initialOffset + self.internalOffset)
 						if newOffset > 0 { // Scrolled up
-							if distance < screenHeight && self.progress.page > 1 {
-								self.progress.page = self.progress.page - 1
-								self.updatePages(update: true)
-								if let newPage0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) {
-									self.internalOffset -= newPage0Height
+							let willAdvanceVolume = self.progress.page <= 1
+							let threshold = willAdvanceVolume ? screenHeight / 2 : screenHeight
+							if distance < threshold {
+								self.progress.advancePage(forward: false)
+								if willAdvanceVolume {
+//									self.internalOffset = 0
+								} else {
+									self.updatePages(update: true)
+									if let newPage0Height = self.page0Data.image?.height(scaledWidth: self.geometry.size.width) {
+										self.internalOffset -= newPage0Height
+									}
 								}
 							}
 						} else { // Scrolled down
@@ -83,10 +89,8 @@ struct ReadingContiguous: View {
 								let willAdvanceVolume = self.progress.page >= self.progress.currentVolume.pageCount
 								let threshold = page0Height + (willAdvanceVolume ? page1Height - screenHeight / 2 : page1Height / 2)
 								if distance > threshold {
-									if willAdvanceVolume {
-										self.progress.volume = self.progress.volume + 1
-									} else {
-										self.progress.page = self.progress.page + 1
+									self.progress.advancePage(forward: true)
+									if !willAdvanceVolume {
 										self.internalOffset += page0Height + initialOffset
 										self.updatePages(update: true)
 									}
