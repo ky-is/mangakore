@@ -241,7 +241,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 244146952461D8FE008EAFDA /* Build configuration list for PBXProject "manga kore" */;
+			buildConfigurationList = 244146952461D8FE008EAFDA /* Build configuration list for PBXProject "mangakore" */;
 			compatibilityVersion = "Xcode 11.4";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -477,7 +477,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		244146952461D8FE008EAFDA /* Build configuration list for PBXProject "manga kore" */ = {
+		244146952461D8FE008EAFDA /* Build configuration list for PBXProject "mangakore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				244146AC2461D902008EAFDA /* Debug */,

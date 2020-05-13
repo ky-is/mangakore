@@ -1,20 +1,20 @@
 import SwiftUI
 
 struct ReadingPaginated: View {
-	let page: URL
+	let url: URL
 	let geometry: GeometryProxy
 
 	init(pages: [URL], progress: WorkProgress, geometry: GeometryProxy) {
 		let pageIndex = max(1, progress.page) - 1
-		self.page = pages[pageIndex]
+		self.url = pages[pageIndex]
 		self.geometry = geometry
 
-		self.page.cache(true)
+		self.url.cache(true)
 		pages[safe: pageIndex + 1]?.cache(true)
 	}
 
 	var body: some View {
-		CloudImage(page, priority: true, contentMode: .fit)
+		CloudImage(url, priority: true, contentMode: .fit)
 			.frame(width: geometry.size.width, height: geometry.size.height)
 			.modifier(PinchToZoom())
 	}
