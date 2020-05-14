@@ -44,7 +44,7 @@ private struct ReadingPageToggle: View {
 
 	var body: some View {
 		Rectangle()
-			.fill(Color.clear)
+			.hidden()
 			.contentShape(Rectangle())
 			.onTapGesture {
 				if !self.hasInteracted {
