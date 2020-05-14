@@ -99,7 +99,7 @@ private struct ReadingPage: View {
 							if self.progress.contiguous {
 								ReadingContiguous(pages: pages, progress: self.progress, geometry: geometry, hasInteracted: self.$hasInteracted)
 							} else {
-								ReadingPaginated(pages: pages, progress: self.progress, geometry: geometry)
+								ReadingPaginated(pages: pages, progress: self.progress, geometry: geometry, hasInteracted: self.$hasInteracted)
 							}
 						}
 							.colorInvert(self.userSettings.invertContent)
@@ -112,7 +112,7 @@ private struct ReadingPage: View {
 							self.userSettings.showUI.toggle()
 						}
 					}
-				ReadingUI(geometry: geometry, progress: self.progress, hasInteracted: self.$hasInteracted)
+				ReadingUI(geometry: geometry, progress: self.progress)
 			}
 		}
 	}

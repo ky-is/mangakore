@@ -3,48 +3,15 @@ import SwiftUI
 struct ReadingUI: View {
 	let geometry: GeometryProxy
 	@ObservedObject var progress: WorkProgress
-	@Binding var hasInteracted: Bool
 
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	var body: some View {
-		let pageWidthRange: ClosedRange<CGFloat> = 40...128
-		let advancePageWidth = pageWidthRange.clamp(geometry.size.width * 0.15)
-		return Group {
-			if !progress.contiguous {
-				ReadingPageToggle(progress: progress, forward: true, width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted)
-					.position(x: 0 + advancePageWidth / 2, y: geometry.size.height / 2)
-				ReadingPageToggle(progress: progress, forward: false, width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted)
-					.position(x: geometry.size.width - advancePageWidth / 2, y: geometry.size.height / 2)
-			}
+		Group {
 			if userSettings.showUI {
 				ReadingBar(geometry: geometry, progress: progress)
 			}
 		}
-	}
-}
-
-private struct ReadingPageToggle: View {
-	let progress: WorkProgress
-	let forward: Bool
-	let width: CGFloat
-	let height: CGFloat
-	@Binding var hasInteracted: Bool
-
-	private let yInset: CGFloat = 44
-
-	var body: some View {
-		Rectangle()
-			.fill(Color.clear)
-			.contentShape(Rectangle())
-			.onTapGesture {
-				if !self.hasInteracted {
-					UserSettings.shared.showUI = false
-					self.hasInteracted = true
-				}
-				self.progress.advancePage(forward: self.forward)
-			}
-			.frame(width: width, height: height - yInset * 2)
 	}
 }
 
@@ -92,7 +59,7 @@ struct ReadingUI_Previews: PreviewProvider {
 	static var previews: some View {
 		NavigationView {
 			GeometryReader { geometry in
-				ReadingUI(geometry: geometry, progress: WorkProgress(work), hasInteracted: .constant(false))
+				ReadingUI(geometry: geometry, progress: WorkProgress(work))
 			}
 				.edgesIgnoringSafeArea(.all)
 		}

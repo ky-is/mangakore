@@ -121,7 +121,7 @@ struct ReadingContiguous_Previews: PreviewProvider {
 	static var previews: some View {
 		let work = Work(URL(string: "/")!)!
 		return GeometryReader { geometry in
-			ReadingPaginated(pages: [], progress: WorkProgress(work), geometry: geometry)
+			ReadingContiguous(pages: [], progress: WorkProgress(work), geometry: geometry, hasInteracted: .constant(false))
 		}
 	}
 }
