@@ -59,6 +59,11 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 				page = page - 1
 			} else if volume > 1 {
 				volume = volume - 1
+				page = currentVolume.pageCount
+			} else {
+				DataModel.shared.reading = nil
+				volume = 0
+				page = 0
 			}
 		}
 	}
