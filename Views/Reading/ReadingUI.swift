@@ -1,46 +1,41 @@
 import SwiftUI
 
 struct ReadingUI: View {
-	let progress: WorkProgress
+	let work: Work
 	let geometry: GeometryProxy
 
-	@ObservedObject private var userSettings = UserSettings.shared
-
 	var body: some View {
-		Group {
-			if userSettings.showUI {
-				ReadingBar(geometry: geometry, progress: progress)
-			}
-		}
+		ReadingBar(work: work, geometry: geometry)
 	}
 }
 
 private struct ReadingBar: View {
+	let work: Work
+	@ObservedObject var settings: WorkSettings
 	let geometry: GeometryProxy
-	@ObservedObject var progress: WorkProgress
+
+	init(work: Work, geometry: GeometryProxy) {
+		self.work = work
+		self.settings = work.settings
+		self.geometry = geometry
+	}
 
 	var body: some View {
 		VStack(spacing: 0) {
 			Divider()
 			HStack(spacing: 0) {
 				Spacer()
-				Group {
-					WorkProgressVolume(progress: progress)
-					Text("　")
-					WorkProgressPage(progress: progress)
-//					Text("　") //SAMPLE
-//					Text(Int(progress.timeReading).description)
-				}
+				WorkProgressStats(work: work)
 				Spacer()
 				Group {
 					NavigationUnicodeButton("⊖") {
-						self.progress.magnification = max(1, self.progress.magnification - 0.025)
+						self.settings.magnification = max(1, self.settings.magnification - 0.025)
 					}
-						.disabled(progress.magnification <= 1)
+						.disabled(settings.magnification <= 1)
 					NavigationUnicodeButton("⊕") {
-						self.progress.magnification = self.progress.magnification + 0.025
+						self.settings.magnification = self.settings.magnification + 0.025
 					}
-						.disabled(progress.magnification > 1.5)
+						.disabled(settings.magnification > 1.5)
 				}
 			}
 				.frame(height: 44)
@@ -59,7 +54,7 @@ struct ReadingUI_Previews: PreviewProvider {
 	static var previews: some View {
 		NavigationView {
 			GeometryReader { geometry in
-				ReadingUI(progress: WorkProgress(work), geometry: geometry)
+				ReadingUI(work: work, geometry: geometry)
 			}
 				.edgesIgnoringSafeArea(.all)
 		}

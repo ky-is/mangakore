@@ -3,8 +3,7 @@ import SwiftUI
 private var dragStartTime: Date?
 
 struct ReadingContiguous: View {
-	let pages: [URL]
-	let progress: WorkProgress
+	let work: Work
 	let geometry: GeometryProxy
 	@Binding var hasInteracted: Bool
 
@@ -16,21 +15,20 @@ struct ReadingContiguous: View {
 	private let page1Data: CloudImage.Data
 	private let page2Data: CloudImage.Data
 
-	init(pages: [URL], progress: WorkProgress, geometry: GeometryProxy, hasInteracted: Binding<Bool>) {
-		self.pages = pages
-		self.progress = progress
+	init(work: Work, geometry: GeometryProxy, hasInteracted: Binding<Bool>) {
+		self.work = work
 		self.geometry = geometry
 		self._hasInteracted = hasInteracted
 
-		let pageIndex = max(1, progress.page) - 1
+		let pageIndex = max(1, work.progress.page) - 1
+		let pages = work.progress.currentVolume.images
 		self.page0Data = CloudImage.Data(for: pages[safe: pageIndex - 1], priority: true)
 		self.page1Data = CloudImage.Data(for: pages[safe: pageIndex + 0], priority: true)
 		self.page2Data = CloudImage.Data(for: pages[safe: pageIndex + 1], priority: false)
-		self.progress.currentVolume.cache(true)
 	}
 
 	var body: some View {
-		ReadingContiguousRenderer(pages: pages, progress: progress, page0Data: page0Data, page1Data: page1Data, page2Data: page2Data, geometry: geometry)
+		ReadingContiguousRenderer(work: work, page0Data: page0Data, page1Data: page1Data, page2Data: page2Data, geometry: geometry)
 			.contentShape(Rectangle())
 			.offset(y: getScrollDistance() - getPage0Height())
 			.frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
@@ -77,8 +75,9 @@ struct ReadingContiguous: View {
 					}
 				}
 			)
-			.onReceive(progress.$volume) { _ in
+			.onReceive(work.progress.$volume) { _ in
 				self.savedOffset = 0
+				self.work.progress.currentVolume.cache(true)
 			}
 	}
 
@@ -101,20 +100,20 @@ struct ReadingContiguous: View {
 		}
 		let distance = -getScrollDistance()
 		if offset > 0 { // Scrolled up
-			let willAdvanceVolume = progress.isFirstPage
+			let willAdvanceVolume = work.progress.isFirstPage
 			let page0Height = getPage0Height()
 			let threshold = willAdvanceVolume ? -page0Height : -page0Height / 2
 			if distance < threshold {
-				progress.advancePage(forward: false)
+				work.progress.advancePage(forward: false)
 				if !willAdvanceVolume {
 					scrollToNewPage(offset: -page0Height)
 				}
 			}
 		} else { // Scrolled down
-			let willAdvanceVolume = progress.isLastPage
+			let willAdvanceVolume = work.progress.isLastPage
 			let threshold = willAdvanceVolume ? page1Height : page1Height / 2
 			if distance > threshold {
-				progress.advancePage(forward: true)
+				work.progress.advancePage(forward: true)
 				if !willAdvanceVolume {
 					scrollToNewPage(offset: page1Height)
 				}
@@ -134,16 +133,16 @@ struct ReadingContiguous: View {
 }
 
 private struct ReadingContiguousRenderer: View {
-	let pageURLs: [URL]
-	var progress: WorkProgress
+	let work: Work
+	@ObservedObject var progress: WorkProgress
 	let screenHeight: CGFloat
 	var page0Data: CloudImage.Data
 	var page1Data: CloudImage.Data
 	var page2Data: CloudImage.Data
 
-	init(pages: [URL], progress: WorkProgress, page0Data: CloudImage.Data, page1Data: CloudImage.Data, page2Data: CloudImage.Data, geometry: GeometryProxy) {
-		self.pageURLs = pages
-		self.progress = progress
+	init(work: Work, page0Data: CloudImage.Data, page1Data: CloudImage.Data, page2Data: CloudImage.Data, geometry: GeometryProxy) {
+		self.work = work
+		self.progress = work.progress
 		self.screenHeight = geometry.size.height
 		self.page0Data = page0Data
 		self.page1Data = page1Data
@@ -161,7 +160,7 @@ private struct ReadingContiguousRenderer: View {
 			if !progress.isLastPage {
 				CloudImage(page2Data, contentMode: .fill, defaultHeight: screenHeight)
 			} else {
-				AdvancePage(label: progress.volume < progress.work.volumes.count ? "次章" : "読破", alignment: .top, height: screenHeight)
+				AdvancePage(label: progress.volume < work.volumes.count ? "次章" : "読破", alignment: .top, height: screenHeight)
 			}
 		}
 	}
@@ -202,7 +201,7 @@ struct ReadingContiguous_Previews: PreviewProvider {
 	static var previews: some View {
 		let work = Work(URL(string: "/")!)!
 		return GeometryReader { geometry in
-			ReadingContiguous(pages: [], progress: WorkProgress(work), geometry: geometry, hasInteracted: .constant(false))
+			ReadingContiguous(work: work, geometry: geometry, hasInteracted: .constant(false))
 		}
 	}
 }

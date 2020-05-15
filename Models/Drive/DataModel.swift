@@ -7,7 +7,7 @@ extension NSUbiquitousKeyValueStore {
 final class DataModel: ObservableObject {
 	static let shared = DataModel()
 
-	@Published var worksProgress: [WorkProgress]? = []
+	@Published var works: [Work]? = []
 
 	@Published var readingID: String? = nil {
 		didSet {
@@ -19,11 +19,11 @@ final class DataModel: ObservableObject {
 		}
 	}
 
-	func getWorkProgress(by id: String?) -> WorkProgress? {
-		if let id = id, let worksProgress = worksProgress {
-			for progress in worksProgress {
-				if progress.work.id == id {
-					return progress
+	func getWork(by id: String?) -> Work? {
+		if let id = id, let works = works {
+			for work in works {
+				if work.id == id {
+					return work
 				}
 			}
 		}
@@ -31,9 +31,8 @@ final class DataModel: ObservableObject {
 	}
 
 	func update() {
-		worksProgress = CloudContainer.contents?
+		works = CloudContainer.contents?
 			.compactMap { Work($0) }
-			.map { WorkProgress($0) }
 		readingID = NSUbiquitousKeyValueStore.default.string(forKey: NSUbiquitousKeyValueStore.savedWorkIDKey)
 	}
 }

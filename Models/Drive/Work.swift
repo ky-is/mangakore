@@ -40,11 +40,18 @@ struct Volume: Equatable, Identifiable {
 	}
 }
 
-struct Work: Equatable {
+struct Work: Equatable, Identifiable {
+	static func == (lhs: Work, rhs: Work) -> Bool {
+		lhs.id == rhs.id
+	}
+
 	let id: String
 	let name: String
 	let root: URL
 	let volumes: [Volume]
+
+	let progress: WorkProgress
+	let settings: WorkSettings
 
 	init?(_ root: URL) {
 		guard let contents = try? FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
@@ -56,8 +63,9 @@ struct Work: Equatable {
 			}
 			return isDirectory
 		}
+		let volumes: [Volume]
 		if childDirectories.isEmpty {
-			self.volumes = [Volume(1, root: root, urls: contents)]
+			volumes = [Volume(1, root: root, urls: contents)]
 		} else {
 			let directories = childDirectories
 				.sorted { a, b in a.lastPathComponent.compare(b.lastPathComponent) == .orderedAscending }
@@ -70,11 +78,15 @@ struct Work: Equatable {
 				volumesAccumulator.append(Volume(currentVolume, root: url, urls: children))
 				currentVolume += 1
 			}
-			self.volumes = volumesAccumulator
+			volumes = volumesAccumulator
 		}
-		self.id = String(root.lastPathComponent.lowercased().filter({ !$0.isWhitespace }).prefix(19))
+		let id = String(root.lastPathComponent.lowercased().filter({ !$0.isWhitespace }).prefix(19))
+		self.id = id
 		self.name = root.lastPathComponent
 		self.root = root
+		self.volumes = volumes
+		self.settings = WorkSettings(id: id, volumes: volumes)
+		self.progress = WorkProgress(id: id, volumes: volumes)
 	}
 
 	func cache(_ enable: Bool) {

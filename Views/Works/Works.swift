@@ -18,8 +18,8 @@ private struct WorksListContainer: View {
 
 	var body: some View {
 		Group {
-			if dataModel.worksProgress != nil {
-				WorksList(worksProgress: dataModel.worksProgress!)
+			if dataModel.works != nil {
+				WorksList(works: dataModel.works!)
 					.background(
 						Group {
 							if dataModel.readingID != nil {
@@ -42,21 +42,22 @@ private struct WorksListContainer: View {
 }
 
 private struct WorksList: View {
-	let reading: [WorkProgress]
-	let unread: [WorkProgress]
-	let finished: [WorkProgress]
+	let reading: [Work]
+	let unread: [Work]
+	let finished: [Work]
 
-	init(worksProgress: [WorkProgress]) {
-		var reading: [WorkProgress] = []
-		var unread: [WorkProgress] = []
-		var finished: [WorkProgress] = []
-		for workProgress in worksProgress {
-			if workProgress.finished {
-				finished.append(workProgress)
-			} else if workProgress.volume > 1 || workProgress.page > 1 {
-				reading.append(workProgress)
+	init(works: [Work]) {
+		var reading: [Work] = []
+		var unread: [Work] = []
+		var finished: [Work] = []
+		for work in works {
+			let progress = work.progress
+			if progress.finished {
+				finished.append(work)
+			} else if progress.started {
+				reading.append(work)
 			} else {
-				unread.append(workProgress)
+				unread.append(work)
 			}
 		}
 		self.reading = reading
@@ -69,21 +70,21 @@ private struct WorksList: View {
 			if !reading.isEmpty {
 				Section(header: Text("読中")) {
 					ForEach(reading) {
-						WorksEntry(progress: $0)
+						WorksEntry(work: $0)
 					}
 				}
 			}
 			if !unread.isEmpty {
 				Section(header: Text("未読")) {
 					ForEach(unread) {
-						WorksEntry(progress: $0)
+						WorksEntry(work: $0)
 					}
 				}
 			}
 			if !finished.isEmpty {
 				Section(header: Text("読破")) {
 					ForEach(finished) {
-						WorksEntry(progress: $0)
+						WorksEntry(work: $0)
 					}
 				}
 			}
@@ -92,27 +93,20 @@ private struct WorksList: View {
 }
 
 private struct WorksEntry: View {
-	@ObservedObject var progress: WorkProgress
+	let work: Work
 
 	@State private var showOptions = false
 
 	var body: some View {
 		HStack {
-			WorkIcon(progress)
+			WorkIcon(work)
 			Button(action: {
-				DataModel.shared.readingID = self.progress.work.id
+				DataModel.shared.readingID = self.work.id
 			}) {
 				VStack(alignment: .leading) {
-					Text(progress.work.name)
+					Text(work.name)
 						.font(.headline)
-					HStack(spacing: 0) {
-						WorkProgressVolume(progress: progress)
-						Text("　")
-						if progress.volume > 0 && progress.page > 0 {
-							WorkProgressPage(progress: progress)
-						}
-					}
-						.font(Font.subheadline.monospacedDigit())
+					WorkProgressStats(work: work)
 				}
 			}
 			Spacer()
@@ -122,17 +116,16 @@ private struct WorksEntry: View {
 				Text("⋯")
 					.bold()
 					.actionPopover(isPresented: $showOptions) {
-						ActionPopover(title: Text(self.progress.work.name).font(.title), message: nil, accentColor: .primary, buttons: [
+						ActionPopover(title: Text(self.work.name).font(.title), message: nil, accentColor: .primary, buttons: [
 							.destructive(Text("Reset reading progress")) {
-								self.progress.volume = 0
-								self.progress.page = 0
-								self.progress.rating = 0
+								self.work.progress.volume = 0
+								self.work.progress.page = 0
 							},
 							.default(Text("Cache local copy")) {
-								self.progress.work.cache(true)
+								self.work.cache(true)
 							},
 							.destructive(Text("Remove local copy")) {
-								self.progress.work.cache(false)
+								self.work.cache(false)
 							},
 							.cancel(),
 						])

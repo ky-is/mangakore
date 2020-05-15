@@ -19,19 +19,19 @@ final class DefaultsSync: NSObject {
 				let split = key.split(separator: "｜")
 				if split.count == 2 {
 					let workID = String(split[0]), progressKey = split[1]
-					if let workProgress = DataModel.shared.getWorkProgress(by: workID) {
+					if let work = DataModel.shared.getWork(by: workID) {
 						DispatchQueue.main.async {
 							switch progressKey {
 							case "p":
-								workProgress.page = cloudDefaults.integer(forKey: key)
-							case "r":
-								workProgress.rating = cloudDefaults.integer(forKey: key)
+								work.progress.page = cloudDefaults.integer(forKey: key)
 							case "v":
-								workProgress.volume = cloudDefaults.integer(forKey: key)
-							case "c":
-								workProgress.contiguous = cloudDefaults.bool(forKey: key)
+								work.progress.volume = cloudDefaults.integer(forKey: key)
 							case "t":
-								workProgress.timeReading = cloudDefaults.double(forKey: key)
+								work.progress.timeReading = cloudDefaults.double(forKey: key)
+							case "c":
+								work.settings.contiguous = cloudDefaults.bool(forKey: key)
+							case "r":
+								work.settings.rating = cloudDefaults.integer(forKey: key)
 							default:
 								print("Unknown key", progressKey)
 							}

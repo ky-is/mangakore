@@ -1,34 +1,32 @@
 import SwiftUI
 
 struct Reading: View {
-	@ObservedObject var progress: WorkProgress
+	let work: Work
 
 	@State private var showVolumeList = false
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	init(id: String) {
-		self.progress = DataModel.shared.getWorkProgress(by: id)!
+		self.work = DataModel.shared.getWork(by: id)!
 	}
 
 	var body: some View {
 		Group {
-			if progress.work.volumes.isEmpty {
+			if work.volumes.isEmpty {
 				Text("Invalid folder layout")
-			} else if progress.volume > 0 {
-				ReadingPage(progress: progress)
 			} else {
-				EmptyView()
+				ReadingPage(work: work)
 			}
 		}
 			.edgesIgnoringSafeArea(.all)
-			.navigationBarTitle(Text(progress.work.name), displayMode: .inline)
+			.navigationBarTitle(Text(work.name), displayMode: .inline)
 			.navigationBarItems(trailing:
 				HStack {
 					NavigationEmojiButton("📖") {
 						self.showVolumeList.toggle()
 					}
 						.popover(isPresented: $showVolumeList, attachmentAnchor: .point(.bottom), arrowEdge: .top) {
-							VolumeList(progress: self.progress)
+							VolumeList(work: self.work)
 								.environmentObject(DataModel.shared)
 						}
 					NavigationEmojiButton("☯️") {
@@ -39,13 +37,13 @@ struct Reading: View {
 			)
 			.navigationBarHidden(!userSettings.showUI)
 			.onAppear {
-				self.progress.startReading()
-				if self.progress.volume < 1 {
-					self.progress.volume = 1
+				self.work.progress.startReading()
+				if self.work.progress.volume < 1 {
+					self.work.progress.volume = 1
 				}
 			}
 			.onDisappear {
-				self.progress.saveReadingTime(continuing: false)
+				self.work.progress.saveReadingTime(continuing: false)
 				withAnimation {
 					self.userSettings.showUI = true
 				}
@@ -55,13 +53,19 @@ struct Reading: View {
 }
 
 private struct VolumeList: View {
+	let work: Work
 	@ObservedObject var progress: WorkProgress
 
 	@Environment(\.presentationMode) private var presentationMode
 
+	init(work: Work) {
+		self.work = work
+		self.progress = work.progress
+	}
+
 	var body: some View {
 		let currentVolume = progress.currentVolume
-		return List(progress.work.volumes) { volume in
+		return List(work.volumes) { volume in
 			Button(action: {
 				self.progress.volume = volume.id
 				self.presentationMode.wrappedValue.dismiss()
@@ -80,43 +84,39 @@ private struct VolumeList: View {
 }
 
 private struct ReadingPage: View {
-	@ObservedObject var progress: WorkProgress
+	let work: Work
+	@ObservedObject var settings: WorkSettings
 
 	@ObservedObject private var userSettings = UserSettings.shared
-
 	private let advancePageWidth: CGFloat = 44
-
 	@State private var hasInteracted = false
 
+	init(work: Work) {
+		self.work = work
+		self.settings = work.settings
+	}
+
 	var body: some View {
-		let pages = progress.currentVolume.images
-		return GeometryReader { geometry in
+		GeometryReader { geometry in
 			ZStack {
 				Group {
-					if pages.isEmpty {
-						VStack {
-							Text("No pages in this volume")
-							Text("Please check the folder in iCloud and try again.")
-						}
+					if self.settings.contiguous {
+						ReadingContiguous(work: self.work, geometry: geometry, hasInteracted: self.$hasInteracted)
 					} else {
-						Group {
-							if self.progress.contiguous {
-								ReadingContiguous(pages: pages, progress: self.progress, geometry: geometry, hasInteracted: self.$hasInteracted)
-							} else {
-								ReadingPaginated(pages: pages, progress: self.progress, geometry: geometry, hasInteracted: self.$hasInteracted)
-							}
-						}
-							.colorInvert(self.userSettings.invertContent)
-							.scaleEffect(CGFloat(self.progress.magnification))
+						ReadingPaginated(work: self.work, geometry: geometry, hasInteracted: self.$hasInteracted)
 					}
 				}
+					.colorInvert(self.userSettings.invertContent)
+					.scaleEffect(CGFloat(self.settings.magnification))
 					.onTapGesture {
 						self.hasInteracted = true
 						withAnimation {
 							self.userSettings.showUI.toggle()
 						}
 					}
-				ReadingUI(progress: self.progress, geometry: geometry)
+				if self.userSettings.showUI {
+					ReadingUI(work: self.work, geometry: geometry)
+				}
 			}
 		}
 	}
