@@ -43,7 +43,9 @@ struct Reading: View {
 			}
 			.onDisappear {
 				self.progress.saveReadingTime(continuing: false)
-				self.userSettings.showUI = true
+				withAnimation {
+					self.userSettings.showUI = true
+				}
 				self.dataModel.reading = nil
 			}
 	}

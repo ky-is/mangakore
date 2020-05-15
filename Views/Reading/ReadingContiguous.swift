@@ -34,7 +34,9 @@ struct ReadingContiguous: View {
 		page2Data.updateURL(pageURLs[safe: pageIndex + 1], priority: false)
 		if update && !hasInteracted {
 			hasInteracted = true
-			UserSettings.shared.showUI = false
+			withAnimation {
+				UserSettings.shared.showUI = false
+			}
 		}
 	}
 

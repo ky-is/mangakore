@@ -48,8 +48,10 @@ private struct ReadingPageToggle: View {
 			.contentShape(Rectangle())
 			.onTapGesture {
 				if !self.hasInteracted {
-					UserSettings.shared.showUI = false
 					self.hasInteracted = true
+					withAnimation {
+						UserSettings.shared.showUI = false
+					}
 				}
 				self.progress.advancePage(forward: self.forward)
 			}
