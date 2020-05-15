@@ -36,3 +36,33 @@ extension UIImage {
 		return size.height * (scaledWidth / size.width)
 	}
 }
+
+extension CGFloat {
+	func magnitude(between value: Self) -> Self {
+		return distance(to: value).magnitude
+	}
+}
+
+extension Optional where Wrapped == FloatingPointSign {
+	var sign: Int {
+		switch self {
+		case .plus:
+			return 1
+		case .minus:
+			return -1
+		case .none:
+			return 0
+		}
+	}
+}
+
+extension FloatingPointSign {
+	var sign: Int {
+		switch self {
+		case .plus:
+			return 1
+		case .minus:
+			return -1
+		}
+	}
+}

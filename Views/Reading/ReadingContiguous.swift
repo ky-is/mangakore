@@ -1,5 +1,7 @@
 import SwiftUI
 
+private var dragStartTime: Date?
+
 struct ReadingContiguous: View {
 	let pageURLs: [URL]
 	@ObservedObject var progress: WorkProgress
@@ -10,9 +12,9 @@ struct ReadingContiguous: View {
 
 	@State private var savedOffset: CGFloat = 0
 	@GestureState private var dragOffset: CGFloat?
-	@GestureState private var isDragPanning = false
+	@GestureState private var dragDirection: FloatingPointSign?
 
-	@ObservedObject private var page0Data = CloudImage.Data()
+	@ObservedObject private var page0Data: CloudImage.Data
 	@ObservedObject private var page1Data = CloudImage.Data()
 	@ObservedObject private var page2Data = CloudImage.Data()
 
@@ -22,17 +24,17 @@ struct ReadingContiguous: View {
 		self.screenWidth = geometry.size.width
 		self.screenHeight = geometry.size.height
 		self._hasInteracted = hasInteracted
-		updatePages(update: false)
+
+		let pageIndex = max(1, progress.page) - 1
+		self.page0Data = CloudImage.Data(for: pageURLs[safe: pageIndex - 1], priority: true)
+		self.page1Data = CloudImage.Data(for: pageURLs[safe: pageIndex + 0], priority: true)
+		self.page2Data = CloudImage.Data(for: pageURLs[safe: pageIndex + 1], priority: false)
 		progress.currentVolume.cache(true)
 	}
 
-	private func updatePages(update: Bool) {
-		let pageIndex = max(1, progress.page) - 1
-		let previousPageURL = pageURLs[safe: pageIndex - 1]
-		page0Data.updateURL(previousPageURL, priority: true)
-		page1Data.updateURL(pageURLs[safe: pageIndex + 0], priority: true)
-		page2Data.updateURL(pageURLs[safe: pageIndex + 1], priority: false)
-		if update && !hasInteracted {
+	private func scrollToNewPage(offset: CGFloat) {
+		savedOffset += offset
+		if !hasInteracted {
 			hasInteracted = true
 			withAnimation {
 				UserSettings.shared.showUI = false
@@ -71,23 +73,43 @@ struct ReadingContiguous: View {
 			.gesture(
 				DragGesture(minimumDistance: 0)
 					.updating($dragOffset) { drag, dragOffset, transaction in
+						if dragStartTime == nil {
+							dragStartTime = drag.time
+						}
 						let newOffset = self.getScroll(from: drag)
 						dragOffset = newOffset
 					}
-					.updating($isDragPanning) { drag, isDragPanning, transaction in
-						if !isDragPanning && abs(drag.predictedEndTranslation.height) > 15 {
-							isDragPanning = true
+					.updating($dragDirection) { drag, dragDirection, transaction in
+						let newDragLocation = drag.location.y
+						let totalDragDistance = newDragLocation.distance(to: drag.startLocation.y)
+						if totalDragDistance >= 0 || totalDragDistance < -10 {
+							dragDirection = totalDragDistance.sign
 						}
 					}
 					.onEnded { drag in
 						let newOffset = self.getScroll(from: drag)
-						self.addScroll(offset: newOffset, page0Height: page0Height, isFirstPage: isFirstPage, isLastPage: isLastPage)
+						var interpretAsTap = false
+						if let startTime = dragStartTime, newOffset.magnitude < 10 {
+							let timeSinceStart = startTime.distance(to: drag.time)
+							if timeSinceStart < 0.1 {
+								interpretAsTap = true
+							}
+						}
+						if interpretAsTap {
+							self.hasInteracted = true
+							withAnimation {
+								UserSettings.shared.showUI.toggle()
+							}
+						} else {
+							self.addScroll(offset: newOffset, page0Height: page0Height, isFirstPage: isFirstPage, isLastPage: isLastPage)
+						}
+						dragStartTime = nil
 					}
 			)
 			.overlay(
 				Group {
-					if dragOffset != nil && !isDragPanning {
-						ActiveScrolling(scrollOffset: $savedOffset, onScroll: onScroll(direction:))
+					if dragDirection != nil {
+						ActiveScrolling(scrollOffset: $savedOffset, direction: dragDirection, onScroll: onScroll(direction:))
 					}
 				}
 			)
@@ -115,8 +137,7 @@ struct ReadingContiguous: View {
 			if distance < threshold {
 				progress.advancePage(forward: false)
 				if !willAdvanceVolume {
-					savedOffset -= page0Height
-					updatePages(update: true)
+					scrollToNewPage(offset: -page0Height)
 				}
 			}
 		} else { // Scrolled down
@@ -125,8 +146,7 @@ struct ReadingContiguous: View {
 			if distance > threshold {
 				progress.advancePage(forward: true)
 				if !willAdvanceVolume {
-					savedOffset += page1Height
-					updatePages(update: true)
+					scrollToNewPage(offset: page1Height)
 				}
 			}
 		}
@@ -150,6 +170,7 @@ private struct AdvancePage: View {
 
 private struct ActiveScrolling: View {
 	@Binding var scrollOffset: CGFloat
+	let direction: FloatingPointSign?
 	let onScroll: (CGFloat) -> Void
 
 	private let timer = Timer.publish(every: 0, on: .main, in: .default).autoconnect()
@@ -158,7 +179,7 @@ private struct ActiveScrolling: View {
 		Rectangle()
 			.hidden()
 			.onReceive(timer) { _ in
-				self.onScroll(0.1)
+				self.onScroll(0.1 * CGFloat(self.direction.sign))
 			}
 	}
 }
