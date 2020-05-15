@@ -31,9 +31,9 @@ extension NSUbiquitousKeyValueStore {
 	}
 }
 
-extension UIImage {
-	func height(scaledWidth: CGFloat) -> CGFloat {
-		return size.height * (scaledWidth / size.width)
+extension CGSize {
+	func height(atWidth targetWidth: CGFloat) -> CGFloat {
+		return height * (targetWidth / width)
 	}
 }
 

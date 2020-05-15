@@ -3,81 +3,37 @@ import SwiftUI
 private var dragStartTime: Date?
 
 struct ReadingContiguous: View {
-	let pageURLs: [URL]
-	@ObservedObject var progress: WorkProgress
-
-	let screenWidth: CGFloat
-	let screenHeight: CGFloat
+	let pages: [URL]
+	let progress: WorkProgress
+	let geometry: GeometryProxy
 	@Binding var hasInteracted: Bool
 
 	@State private var savedOffset: CGFloat = 0
 	@GestureState private var dragOffset: CGFloat?
 	@GestureState private var dragDirection: FloatingPointSign?
 
-	@ObservedObject private var page0Data: CloudImage.Data
-	@ObservedObject private var page1Data: CloudImage.Data
-	@ObservedObject private var page2Data: CloudImage.Data
+	private let page0Data: CloudImage.Data
+	private let page1Data: CloudImage.Data
+	private let page2Data: CloudImage.Data
 
 	init(pages: [URL], progress: WorkProgress, geometry: GeometryProxy, hasInteracted: Binding<Bool>) {
-		self.pageURLs = pages
+		self.pages = pages
 		self.progress = progress
-		self.screenWidth = geometry.size.width
-		self.screenHeight = geometry.size.height
+		self.geometry = geometry
 		self._hasInteracted = hasInteracted
 
 		let pageIndex = max(1, progress.page) - 1
-		self.page0Data = CloudImage.Data(for: pageURLs[safe: pageIndex - 1], priority: true)
-		self.page1Data = CloudImage.Data(for: pageURLs[safe: pageIndex + 0], priority: true)
-		self.page2Data = CloudImage.Data(for: pageURLs[safe: pageIndex + 1], priority: false)
-		progress.currentVolume.cache(true)
-	}
-
-	private func scrollToNewPage(offset: CGFloat) {
-		savedOffset += offset
-		if !hasInteracted {
-			hasInteracted = true
-			withAnimation {
-				UserSettings.shared.showUI = false
-			}
-		}
-	}
-
-	private func getScroll(from drag: DragGesture.Value) -> CGFloat {
-		return drag.translation.height * 3
-	}
-
-	private func getScrollOffset() -> CGFloat {
-		return savedOffset + (dragOffset ?? 0)
-	}
-
-	private func getPage0Height() -> CGFloat {
-		return page0Data.image?.height(scaledWidth: screenWidth) ?? screenHeight
-	}
-
-	private func isFirstPage() -> Bool {
-		return progress.page == 1
-	}
-	private func isLastPage() -> Bool {
-		return progress.page == progress.currentVolume.pageCount
+		self.page0Data = CloudImage.Data(for: pages[safe: pageIndex - 1], priority: true)
+		self.page1Data = CloudImage.Data(for: pages[safe: pageIndex + 0], priority: true)
+		self.page2Data = CloudImage.Data(for: pages[safe: pageIndex + 1], priority: false)
+		self.progress.currentVolume.cache(true)
 	}
 
 	var body: some View {
-		VStack(spacing: 0) {
-			if isFirstPage() {
-				AdvancePage(label: progress.volume > 1 ? "前章" : "未読", alignment: .bottom, height: screenHeight)
-			} else {
-				CloudImage(page0Data, contentMode: .fill, defaultHeight: screenHeight)
-			}
-			CloudImage(page1Data, contentMode: .fill, defaultHeight: screenHeight)
-			if !isLastPage() {
-				CloudImage(page2Data, contentMode: .fill, defaultHeight: screenHeight)
-			} else {
-				AdvancePage(label: progress.volume < progress.work.volumes.count ? "次章" : "読破", alignment: .top, height: screenHeight)
-			}
-		}
-			.offset(y: getScrollOffset() - getPage0Height())
-			.frame(width: screenWidth, height: screenHeight, alignment: .top)
+		ReadingContiguousRenderer(pages: pages, progress: progress, page0Data: page0Data, page1Data: page1Data, page2Data: page2Data, geometry: geometry)
 			.contentShape(Rectangle())
+			.offset(y: getScrollDistance() - getPage0Height())
+			.frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
 			.gesture(
 				DragGesture(minimumDistance: 0)
 					.updating($dragOffset) { drag, dragOffset, transaction in
@@ -126,16 +82,28 @@ struct ReadingContiguous: View {
 			}
 	}
 
+	private func getScroll(from drag: DragGesture.Value) -> CGFloat {
+		return drag.translation.height * 3
+	}
+
+	private func getPage0Height() -> CGFloat {
+		return page0Data.image?.size.height(atWidth: geometry.size.width) ?? geometry.size.height
+	}
+
+	private func getScrollDistance() -> CGFloat {
+		return savedOffset + (dragOffset ?? 0)
+	}
+
 	private func onScroll(offset: CGFloat) {
 		savedOffset += offset
-		guard let page1Height = self.page1Data.image?.height(scaledWidth: screenWidth) else {
+		guard let page1Height = self.page1Data.image?.size.height(atWidth: geometry.size.width) else {
 			return
 		}
-		let distance = -getScrollOffset()
+		let distance = -getScrollDistance()
 		if offset > 0 { // Scrolled up
-			let willAdvanceVolume = isFirstPage()
+			let willAdvanceVolume = progress.isFirstPage
 			let page0Height = getPage0Height()
-			let threshold = -page0Height / 2
+			let threshold = willAdvanceVolume ? -page0Height : -page0Height / 2
 			if distance < threshold {
 				progress.advancePage(forward: false)
 				if !willAdvanceVolume {
@@ -143,13 +111,57 @@ struct ReadingContiguous: View {
 				}
 			}
 		} else { // Scrolled down
-			let willAdvanceVolume = isLastPage()
-			let threshold = willAdvanceVolume ? page1Height - screenHeight / 2 : page1Height / 2
+			let willAdvanceVolume = progress.isLastPage
+			let threshold = willAdvanceVolume ? page1Height : page1Height / 2
 			if distance > threshold {
 				progress.advancePage(forward: true)
 				if !willAdvanceVolume {
 					scrollToNewPage(offset: page1Height)
 				}
+			}
+		}
+	}
+
+	private func scrollToNewPage(offset: CGFloat) {
+		savedOffset += offset
+		if !hasInteracted {
+			hasInteracted = true
+			withAnimation {
+				UserSettings.shared.showUI = false
+			}
+		}
+	}
+}
+
+private struct ReadingContiguousRenderer: View {
+	let pageURLs: [URL]
+	var progress: WorkProgress
+	let screenHeight: CGFloat
+	var page0Data: CloudImage.Data
+	var page1Data: CloudImage.Data
+	var page2Data: CloudImage.Data
+
+	init(pages: [URL], progress: WorkProgress, page0Data: CloudImage.Data, page1Data: CloudImage.Data, page2Data: CloudImage.Data, geometry: GeometryProxy) {
+		self.pageURLs = pages
+		self.progress = progress
+		self.screenHeight = geometry.size.height
+		self.page0Data = page0Data
+		self.page1Data = page1Data
+		self.page2Data = page2Data
+	}
+
+	var body: some View {
+		VStack(spacing: 0) {
+			if progress.isFirstPage {
+				AdvancePage(label: progress.volume > 1 ? "前章" : "未読", alignment: .bottom, height: screenHeight)
+			} else {
+				CloudImage(page0Data, contentMode: .fill, defaultHeight: screenHeight)
+			}
+			CloudImage(page1Data, contentMode: .fill, defaultHeight: screenHeight)
+			if !progress.isLastPage {
+				CloudImage(page2Data, contentMode: .fill, defaultHeight: screenHeight)
+			} else {
+				AdvancePage(label: progress.volume < progress.work.volumes.count ? "次章" : "読破", alignment: .top, height: screenHeight)
 			}
 		}
 	}

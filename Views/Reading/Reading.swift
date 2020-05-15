@@ -5,7 +5,10 @@ struct Reading: View {
 
 	@State private var showVolumeList = false
 	@ObservedObject private var userSettings = UserSettings.shared
-	@EnvironmentObject private var dataModel: DataModel
+
+	init(id: String) {
+		self.progress = DataModel.shared.getWorkProgress(by: id)!
+	}
 
 	var body: some View {
 		Group {
@@ -46,7 +49,7 @@ struct Reading: View {
 				withAnimation {
 					self.userSettings.showUI = true
 				}
-				self.dataModel.reading = nil
+				DataModel.shared.readingID = nil
 			}
 	}
 }
@@ -55,7 +58,6 @@ private struct VolumeList: View {
 	@ObservedObject var progress: WorkProgress
 
 	@Environment(\.presentationMode) private var presentationMode
-	@EnvironmentObject private var dataModel: DataModel
 
 	var body: some View {
 		let currentVolume = progress.currentVolume
@@ -114,7 +116,7 @@ private struct ReadingPage: View {
 							self.userSettings.showUI.toggle()
 						}
 					}
-				ReadingUI(geometry: geometry, progress: self.progress)
+				ReadingUI(progress: self.progress, geometry: geometry)
 			}
 		}
 	}
@@ -122,7 +124,6 @@ private struct ReadingPage: View {
 
 struct Reading_Previews: PreviewProvider {
 	static var previews: some View {
-		let work = Work(URL(string: "/")!)!
-		return Reading(progress: WorkProgress(work))
+		Reading(id: "TEST")
 	}
 }

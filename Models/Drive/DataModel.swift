@@ -9,13 +9,13 @@ final class DataModel: ObservableObject {
 
 	@Published var worksProgress: [WorkProgress]? = []
 
-	@Published var reading: WorkProgress? = nil {
+	@Published var readingID: String? = nil {
 		didSet {
-			guard reading != oldValue else {
+			guard readingID != oldValue else {
 				return
 			}
-			NSUbiquitousKeyValueStore.default.set(reading?.work.id, forKey: NSUbiquitousKeyValueStore.savedWorkIDKey)
-			objectWillChange.send()
+			NSUbiquitousKeyValueStore.default.set(readingID, forKey: NSUbiquitousKeyValueStore.savedWorkIDKey)
+//			objectWillChange.send()
 		}
 	}
 
@@ -34,12 +34,6 @@ final class DataModel: ObservableObject {
 		worksProgress = CloudContainer.contents?
 			.compactMap { Work($0) }
 			.map { WorkProgress($0) }
-		if let worksProgress = worksProgress, let savedWorkID = NSUbiquitousKeyValueStore.default.string(forKey: NSUbiquitousKeyValueStore.savedWorkIDKey) {
-			reading = worksProgress.first { $0.work.id == savedWorkID }
-		}
-	}
-
-	func markAsUpdated() {
-		objectWillChange.send()
+		readingID = NSUbiquitousKeyValueStore.default.string(forKey: NSUbiquitousKeyValueStore.savedWorkIDKey)
 	}
 }

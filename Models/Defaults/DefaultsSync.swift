@@ -12,12 +12,8 @@ final class DefaultsSync: NSObject {
 		let cloudDefaults = NSUbiquitousKeyValueStore.default
 		for key in newKeys {
 			if key == NSUbiquitousKeyValueStore.savedWorkIDKey {
-				let workID = cloudDefaults.string(forKey: key)
-				let workProgress = DataModel.shared.getWorkProgress(by: workID)
-				if workID == nil || workProgress != nil {
-					DispatchQueue.main.async {
-						DataModel.shared.reading = workProgress
-					}
+				DispatchQueue.main.async {
+					DataModel.shared.readingID = cloudDefaults.string(forKey: key)
 				}
 			} else {
 				let split = key.split(separator: "｜")

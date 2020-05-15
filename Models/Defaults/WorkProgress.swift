@@ -28,7 +28,6 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 			sync(value: volume)
 			page = 1
 			work.volumes[safe: oldValue]?.cache(false)
-			DataModel.shared.markAsUpdated()
 		}
 	}
 
@@ -41,7 +40,6 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 				saveReadingTime(continuing: true)
 			}
 			sync(value: page)
-			DataModel.shared.markAsUpdated()
 		}
 	}
 
@@ -52,7 +50,7 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 			} else if volume < work.volumes.count {
 				volume = volume + 1
 			} else {
-				DataModel.shared.reading = nil
+				DataModel.shared.readingID = nil
 			}
 		} else {
 			if page > 1 {
@@ -61,7 +59,7 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 				volume = volume - 1
 				page = currentVolume.pageCount
 			} else {
-				DataModel.shared.reading = nil
+				DataModel.shared.readingID = nil
 				volume = 0
 				page = 0
 			}
@@ -145,15 +143,21 @@ final class WorkProgress: ObservableObject, Equatable, Identifiable {
 		self.timeReading = store.double(forKey: getKey(for: id, named: "timeReading"))
 	}
 
+	var started: Bool {
+		volume > 1 || page > 1
+	}
+	var finished: Bool {
+		volume >= work.volumes.count && page >= (work.volumes.last?.pageCount ?? 0)
+	}
+
 	var currentVolume: Volume {
 		work.volumes[max(0, volume - 1)]
 	}
 
-	var startedReading: Bool {
-		volume > 1 || page > 1
+	var isFirstPage: Bool {
+		page == 1
 	}
-
-	var finished: Bool {
-		volume >= work.volumes.count && page >= (work.volumes.last?.pageCount ?? 0)
+	var isLastPage: Bool {
+		page == currentVolume.pageCount
 	}
 }

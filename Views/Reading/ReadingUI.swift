@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct ReadingUI: View {
+	let progress: WorkProgress
 	let geometry: GeometryProxy
-	@ObservedObject var progress: WorkProgress
 
 	@ObservedObject private var userSettings = UserSettings.shared
 
@@ -59,7 +59,7 @@ struct ReadingUI_Previews: PreviewProvider {
 	static var previews: some View {
 		NavigationView {
 			GeometryReader { geometry in
-				ReadingUI(geometry: geometry, progress: WorkProgress(work))
+				ReadingUI(progress: WorkProgress(work), geometry: geometry)
 			}
 				.edgesIgnoringSafeArea(.all)
 		}

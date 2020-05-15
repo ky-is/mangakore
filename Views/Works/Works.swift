@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct Works: View {
-	@EnvironmentObject private var dataModel: DataModel
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	var body: some View {
@@ -22,7 +21,11 @@ private struct WorksListContainer: View {
 			if dataModel.worksProgress != nil {
 				WorksList(worksProgress: dataModel.worksProgress!)
 					.background(
-						HiddenNavigationLink(enabled: dataModel.reading != nil, destination: Reading(progress: dataModel.reading ?? WorkProgress(Work(URL(string: "/")!)!)))
+						Group {
+							if dataModel.readingID != nil {
+								HiddenNavigationLink(enabled: true, destination: Reading(id: dataModel.readingID!))
+							}
+						}
 					)
 			} else {
 				VStack {
@@ -97,7 +100,7 @@ private struct WorksEntry: View {
 		HStack {
 			WorkIcon(progress)
 			Button(action: {
-				DataModel.shared.reading = self.progress
+				DataModel.shared.readingID = self.progress.work.id
 			}) {
 				VStack(alignment: .leading) {
 					Text(progress.work.name)
