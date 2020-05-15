@@ -15,8 +15,8 @@ struct ReadingContiguous: View {
 	@GestureState private var dragDirection: FloatingPointSign?
 
 	@ObservedObject private var page0Data: CloudImage.Data
-	@ObservedObject private var page1Data = CloudImage.Data()
-	@ObservedObject private var page2Data = CloudImage.Data()
+	@ObservedObject private var page1Data: CloudImage.Data
+	@ObservedObject private var page2Data: CloudImage.Data
 
 	init(pages: [URL], progress: WorkProgress, geometry: GeometryProxy, hasInteracted: Binding<Bool>) {
 		self.pageURLs = pages
@@ -50,24 +50,32 @@ struct ReadingContiguous: View {
 		return savedOffset + (dragOffset ?? 0)
 	}
 
+	private func getPage0Height() -> CGFloat {
+		return page0Data.image?.height(scaledWidth: screenWidth) ?? screenHeight
+	}
+
+	private func isFirstPage() -> Bool {
+		return progress.page == 1
+	}
+	private func isLastPage() -> Bool {
+		return progress.page == progress.currentVolume.pageCount
+	}
+
 	var body: some View {
-		let page0Height = page0Data.image?.height(scaledWidth: screenWidth) ?? screenHeight
-		let isFirstPage = progress.page == 1
-		let isLastPage = progress.page == progress.currentVolume.pageCount
-		return VStack(spacing: 0) {
-			if isFirstPage {
+		VStack(spacing: 0) {
+			if isFirstPage() {
 				AdvancePage(label: progress.volume > 1 ? "前章" : "未読", alignment: .bottom, height: screenHeight)
 			} else {
 				CloudImage(page0Data, contentMode: .fill, defaultHeight: screenHeight)
 			}
 			CloudImage(page1Data, contentMode: .fill, defaultHeight: screenHeight)
-			if !isLastPage {
+			if !isLastPage() {
 				CloudImage(page2Data, contentMode: .fill, defaultHeight: screenHeight)
 			} else {
 				AdvancePage(label: progress.volume < progress.work.volumes.count ? "次章" : "読破", alignment: .top, height: screenHeight)
 			}
 		}
-			.offset(y: getScrollOffset() - page0Height)
+			.offset(y: getScrollOffset() - getPage0Height())
 			.frame(width: screenWidth, height: screenHeight, alignment: .top)
 			.contentShape(Rectangle())
 			.gesture(
@@ -101,7 +109,7 @@ struct ReadingContiguous: View {
 								UserSettings.shared.showUI.toggle()
 							}
 						} else {
-							self.addScroll(offset: newOffset, page0Height: page0Height, isFirstPage: isFirstPage, isLastPage: isLastPage)
+							self.savedOffset += newOffset
 						}
 						dragStartTime = nil
 					}
@@ -109,7 +117,7 @@ struct ReadingContiguous: View {
 			.overlay(
 				Group {
 					if dragDirection != nil {
-						ActiveScrolling(scrollOffset: $savedOffset, direction: dragDirection, onScroll: onScroll(direction:))
+						ActiveScrolling(scrollOffset: $savedOffset, direction: dragDirection, onScroll: onScroll(offset:))
 					}
 				}
 			)
@@ -118,21 +126,15 @@ struct ReadingContiguous: View {
 			}
 	}
 
-	private func onScroll(direction: CGFloat) {
-		let page0Height = page0Data.image?.height(scaledWidth: screenWidth) ?? screenHeight
-		let isFirstPage = progress.page == 1
-		let isLastPage = progress.page == progress.currentVolume.pageCount
-		addScroll(offset: -direction, page0Height: page0Height, isFirstPage: isFirstPage, isLastPage: isLastPage)
-	}
-
-	private func addScroll(offset: CGFloat, page0Height: CGFloat, isFirstPage: Bool, isLastPage: Bool) {
+	private func onScroll(offset: CGFloat) {
 		savedOffset += offset
 		guard let page1Height = self.page1Data.image?.height(scaledWidth: screenWidth) else {
 			return
 		}
 		let distance = -getScrollOffset()
 		if offset > 0 { // Scrolled up
-			let willAdvanceVolume = isFirstPage
+			let willAdvanceVolume = isFirstPage()
+			let page0Height = getPage0Height()
 			let threshold = -page0Height / 2
 			if distance < threshold {
 				progress.advancePage(forward: false)
@@ -141,7 +143,7 @@ struct ReadingContiguous: View {
 				}
 			}
 		} else { // Scrolled down
-			let willAdvanceVolume = isLastPage
+			let willAdvanceVolume = isLastPage()
 			let threshold = willAdvanceVolume ? page1Height - screenHeight / 2 : page1Height / 2
 			if distance > threshold {
 				progress.advancePage(forward: true)
@@ -179,7 +181,7 @@ private struct ActiveScrolling: View {
 		Rectangle()
 			.hidden()
 			.onReceive(timer) { _ in
-				self.onScroll(0.1 * CGFloat(self.direction.sign))
+				self.onScroll(-0.1 * CGFloat(self.direction.sign))
 			}
 	}
 }

@@ -42,7 +42,7 @@ extension CloudImage {
 	}
 
 	final class Data: ObservableObject {
-		@Published var url: URL?
+		let url: URL?
 		@Published var status: Status = .reading
 		@Published var image: UIImage? = nil
 
@@ -85,9 +85,7 @@ extension CloudImage {
 			return .reading
 		}
 
-		func updateURL(_ url: URL?, priority: Bool) {
-			status = .reading
-			image = nil
+		init(for url: URL?, priority: Bool) {
 			if let url = url, url.lastPathComponent.hasSuffix(".icloud") {
 				let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(7))
 				self.url = url.deletingLastPathComponent().appendingPathComponent(imageFileName)
@@ -101,13 +99,6 @@ extension CloudImage {
 					}
 				}
 			}
-		}
-
-		init() {
-		}
-
-		init(for url: URL?, priority: Bool) {
-			updateURL(url, priority: priority)
 		}
 	}
 }
