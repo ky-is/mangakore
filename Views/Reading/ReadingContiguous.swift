@@ -9,7 +9,6 @@ struct ReadingContiguous: View {
 	let work: Work
 	let progress: WorkProgress
 	let geometry: GeometryProxy
-	@Binding var hasInteracted: Bool
 
 	@State private var savedOffset: CGFloat = 0
 	@GestureState private var dragOffset: CGFloat?
@@ -19,11 +18,10 @@ struct ReadingContiguous: View {
 	private let page1Data = CloudImage.Data()
 	private let page2Data = CloudImage.Data()
 
-	init(work: Work, geometry: GeometryProxy, hasInteracted: Binding<Bool>) {
+	init(work: Work, geometry: GeometryProxy) {
 		self.work = work
 		self.progress = work.progress
 		self.geometry = geometry
-		self._hasInteracted = hasInteracted
 		reloadPages()
 	}
 
@@ -76,8 +74,8 @@ struct ReadingContiguous: View {
 							}
 						}
 						if interpretAsTap {
-							if !self.hasInteracted {
-								self.hasInteracted = true
+							if !LocalSettings.shared.hasInteracted {
+								LocalSettings.shared.hasInteracted = true
 							}
 							withAnimation {
 								LocalSettings.shared.showUI.toggle()
@@ -98,7 +96,7 @@ struct ReadingContiguous: View {
 			.onReceive(progress.$page) { page in
 				let changedVolume = previousVolume != self.progress.volume
 				guard changedVolume || page != previousPage else {
-					return print("unchanged", previousVolume, self.progress.volume, previousPage, page)
+					return //print("unchanged", previousVolume, self.progress.volume, previousPage, page)
 				}
 				if changedVolume {
 					self.reloadPages()
@@ -183,8 +181,8 @@ struct ReadingContiguous: View {
 
 	private func scrollToNewPage(offset: CGFloat) {
 		savedOffset += offset
-		if !hasInteracted {
-			hasInteracted = true
+		if !LocalSettings.shared.hasInteracted {
+			LocalSettings.shared.hasInteracted = true
 			withAnimation {
 				LocalSettings.shared.showUI = false
 			}
@@ -272,7 +270,7 @@ struct ReadingContiguous_Previews: PreviewProvider {
 	static var previews: some View {
 		let work = Work(URL(string: "/")!)!
 		return GeometryReader { geometry in
-			ReadingContiguous(work: work, geometry: geometry, hasInteracted: .constant(false))
+			ReadingContiguous(work: work, geometry: geometry)
 		}
 	}
 }

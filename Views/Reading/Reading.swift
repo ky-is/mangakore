@@ -25,8 +25,11 @@ struct Reading: View {
 			}
 			.onDisappear {
 				self.work.progress.saveReadingTime(continuing: false)
-				withAnimation {
-					LocalSettings.shared.showUI = true
+				LocalSettings.shared.hasInteracted = false
+				if !LocalSettings.shared.showUI {
+					withAnimation {
+						LocalSettings.shared.showUI = true
+					}
 				}
 				DataModel.shared.readingID = nil
 			}
@@ -37,15 +40,14 @@ private struct ReadingPage: View {
 	let work: Work
 
 	private let advancePageWidth: CGFloat = 44
-	@State private var hasInteracted = false
 
 	var body: some View {
 		GeometryReader { geometry in
 			ZStack {
-				ReadingPageContent(work: self.work, geometry: geometry, hasInteracted: self.$hasInteracted)
+				ReadingPageContent(work: self.work, geometry: geometry)
 					.onTapGesture {
-						if !self.hasInteracted {
-							self.hasInteracted = true
+						if !LocalSettings.shared.hasInteracted {
+							LocalSettings.shared.hasInteracted = true
 						}
 						withAnimation {
 							LocalSettings.shared.showUI.toggle()
@@ -60,24 +62,22 @@ private struct ReadingPage: View {
 private struct ReadingPageContent: View {
 	let work: Work
 	let geometry: GeometryProxy
-	@Binding var hasInteracted: Bool
 
 	@ObservedObject private var settings: WorkSettings
 	@ObservedObject private var userSettings = UserSettings.shared
 
-	init(work: Work, geometry: GeometryProxy, hasInteracted: Binding<Bool>) {
+	init(work: Work, geometry: GeometryProxy) {
 		self.work = work
 		self.settings = work.settings
 		self.geometry = geometry
-		self._hasInteracted = hasInteracted
 	}
 
 	var body: some View {
 		Group {
 			if settings.contiguous {
-				ReadingContiguous(work: work, geometry: geometry, hasInteracted: $hasInteracted)
+				ReadingContiguous(work: work, geometry: geometry)
 			} else {
-				ReadingPaginated(work: work, geometry: geometry, hasInteracted: $hasInteracted)
+				ReadingPaginated(work: work, geometry: geometry)
 			}
 		}
 			.colorInvert(userSettings.invertContent)

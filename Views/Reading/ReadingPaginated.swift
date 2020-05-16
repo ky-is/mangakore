@@ -3,14 +3,12 @@ import SwiftUI
 struct ReadingPaginated: View {
 	let work: Work
 	let geometry: GeometryProxy
-	@Binding var hasInteracted: Bool
 
 	private let advancePageWidth: CGFloat
 
-	init(work: Work, geometry: GeometryProxy, hasInteracted: Binding<Bool>) {
+	init(work: Work, geometry: GeometryProxy) {
 		self.work = work
 		self.geometry = geometry
-		self._hasInteracted = hasInteracted
 		let pageWidthRange: ClosedRange<CGFloat> = 40...128
 		self.advancePageWidth = pageWidthRange.clamp(geometry.size.width * 0.15)
 	}
@@ -18,9 +16,9 @@ struct ReadingPaginated: View {
 	var body: some View {
 		ZStack {
 			ReadingPaginatedPage(work: work, geometry: geometry)
-			ReadingPageToggle(progress: work.progress, forward: true, width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted)
+			ReadingPageToggle(progress: work.progress, forward: true, width: advancePageWidth, height: geometry.size.height)
 				.position(x: 0 + advancePageWidth / 2, y: geometry.size.height / 2)
-			ReadingPageToggle(progress: work.progress, forward: false, width: advancePageWidth, height: geometry.size.height, hasInteracted: $hasInteracted)
+			ReadingPageToggle(progress: work.progress, forward: false, width: advancePageWidth, height: geometry.size.height)
 				.position(x: geometry.size.width - advancePageWidth / 2, y: geometry.size.height / 2)
 		}
 	}
@@ -54,7 +52,6 @@ private struct ReadingPageToggle: View {
 	let forward: Bool
 	let width: CGFloat
 	let height: CGFloat
-	@Binding var hasInteracted: Bool
 
 	private let yInset: CGFloat = 44
 
@@ -63,8 +60,8 @@ private struct ReadingPageToggle: View {
 			.hidden()
 			.contentShape(Rectangle())
 			.onTapGesture {
-				if !self.hasInteracted {
-					self.hasInteracted = true
+				if !LocalSettings.shared.hasInteracted {
+					LocalSettings.shared.hasInteracted = true
 					withAnimation {
 						LocalSettings.shared.showUI = false
 					}
@@ -79,7 +76,7 @@ struct ReadingPaginated_Previews: PreviewProvider {
 	static var previews: some View {
 		let work = Work(URL(string: "/")!)!
 		return GeometryReader { geometry in
-			ReadingPaginated(work: work, geometry: geometry, hasInteracted: .constant(false))
+			ReadingPaginated(work: work, geometry: geometry)
 		}
 	}
 }
