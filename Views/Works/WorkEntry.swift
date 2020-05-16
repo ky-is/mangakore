@@ -20,7 +20,8 @@ struct WorkIcon: View {
 
 struct WorkProgressStats: View {
 	let work: Work
-	@ObservedObject var progress: WorkProgress
+
+	@ObservedObject private var progress: WorkProgress
 
 	init(work: Work) {
 		self.work = work
@@ -30,8 +31,8 @@ struct WorkProgressStats: View {
 	var body: some View {
 		HStack(spacing: 0) {
 			WorkProgressVolume(work: work)
-			Text("　")
 			if progress.volume > 0 && progress.page > 0 {
+				Text("　")
 				WorkProgressPage(work: work)
 			}
 //			Text("　") //SAMPLE
@@ -44,8 +45,9 @@ struct WorkProgressStats: View {
 
 struct WorkProgressVolume: View {
 	let work: Work
-	@ObservedObject var progress: WorkProgress
-	@ObservedObject var settings: WorkSettings
+
+	@ObservedObject private var progress: WorkProgress
+	@ObservedObject private var settings: WorkSettings
 
 	init(work: Work) {
 		self.work = work
@@ -64,7 +66,7 @@ struct WorkProgressVolume: View {
 }
 
 struct WorkProgressPage: View {
-	@ObservedObject var progress: WorkProgress
+	@ObservedObject private var progress: WorkProgress
 
 	init(work: Work) {
 		self.progress = work.progress

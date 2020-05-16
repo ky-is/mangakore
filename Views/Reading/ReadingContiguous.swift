@@ -94,7 +94,7 @@ struct ReadingContiguous: View {
 			}
 			.onReceive(work.progress.$page) { page in
 				guard previousVolume == self.work.progress.volume, page != previousPage else {
-					return print("unchanged", previousVolume, self.work.progress.volume, previousPage, page)
+					return //print("unchanged", previousVolume, self.work.progress.volume, previousPage, page)
 				}
 				let pageIndex = self.getCurrentPageIndex()
 				let pages = self.work.progress.currentVolume.images
@@ -183,11 +183,12 @@ struct ReadingContiguous: View {
 
 private struct ReadingContiguousRenderer: View {
 	let work: Work
-	@ObservedObject var progress: WorkProgress
 	let screenHeight: CGFloat
 	var page0Data: CloudImage.Data
 	var page1Data: CloudImage.Data
 	var page2Data: CloudImage.Data
+
+	@ObservedObject private var progress: WorkProgress
 
 	init(work: Work, page0Data: CloudImage.Data, page1Data: CloudImage.Data, page2Data: CloudImage.Data, geometry: GeometryProxy) {
 		self.work = work

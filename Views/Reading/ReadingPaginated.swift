@@ -27,8 +27,9 @@ struct ReadingPaginated: View {
 }
 
 private struct ReadingPaginatedPage: View {
-	@ObservedObject var progress: WorkProgress
 	let geometry: GeometryProxy
+
+	@ObservedObject private var progress: WorkProgress
 
 	init(work: Work, geometry: GeometryProxy) {
 		self.progress = work.progress
