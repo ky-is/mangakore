@@ -4,8 +4,14 @@ struct ReadingUI: View {
 	let work: Work
 	let geometry: GeometryProxy
 
+	@ObservedObject private var localSettings = LocalSettings.shared
+
 	var body: some View {
-		ReadingBar(work: work, geometry: geometry)
+		Group {
+			if localSettings.showUI {
+				ReadingBar(work: work, geometry: geometry)
+			}
+		}
 	}
 }
 

@@ -42,17 +42,20 @@ extension CloudImage {
 	}
 
 	final class Data: ObservableObject {
-		let url: URL?
+		var url: URL?
 		@Published var status: Status = .reading
 		@Published var image: UIImage? = nil
 
 		func updateStatus() {
+			let startURL = url
 			DispatchQueue.global(qos: .userInteractive).async {
 				let status = self.getStatus()
 				let image = status == .success || status == .downloading ? UIImage(contentsOfFile: self.url!.path) : nil
 				DispatchQueue.main.async {
-					self.status = status
-					self.image = image
+					if self.url == startURL {
+						self.status = status
+						self.image = image
+					}
 				}
 			}
 		}
@@ -85,7 +88,13 @@ extension CloudImage {
 			return .reading
 		}
 
+		init() {}
+
 		init(for url: URL?, priority: Bool) {
+			load(url, priority: priority)
+		}
+
+		func load(_ url: URL?, priority: Bool) {
 			if let url = url, url.lastPathComponent.hasSuffix(".icloud") {
 				let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(7))
 				self.url = url.deletingLastPathComponent().appendingPathComponent(imageFileName)
@@ -97,8 +106,17 @@ extension CloudImage {
 					if url != nil {
 						self.image = UIImage(contentsOfFile: url!.path)
 					}
+				} else {
+					self.image = nil
+					self.status = .reading
 				}
 			}
+		}
+
+		func assign(_ source: Data) {
+			url = source.url
+			image = source.image
+			status = source.status
 		}
 	}
 }

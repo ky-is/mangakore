@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct Works: View {
-	@ObservedObject private var userSettings = UserSettings.shared
+	@ObservedObject private var localSettings = LocalSettings.shared
 
 	var body: some View {
 		NavigationView {
@@ -9,7 +9,7 @@ struct Works: View {
 				.navigationBarTitle("漫画コレ")
 		}
 			.navigationViewStyle(StackNavigationViewStyle())
-			.statusBar(hidden: !userSettings.showUI)
+			.statusBar(hidden: !localSettings.showUI)
 	}
 }
 

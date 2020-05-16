@@ -65,7 +65,7 @@ private struct ReadingPageToggle: View {
 				if !self.hasInteracted {
 					self.hasInteracted = true
 					withAnimation {
-						UserSettings.shared.showUI = false
+						LocalSettings.shared.showUI = false
 					}
 				}
 				self.progress.advancePage(forward: self.forward)

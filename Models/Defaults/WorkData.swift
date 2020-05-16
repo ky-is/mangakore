@@ -76,7 +76,7 @@ final class WorkSettings: ObservableObject {
 
 final class WorkProgress: ObservableObject {
 	let id: String
-	let volumes: [Volume]
+	private let volumes: [Volume]
 
 	@Published var volume: Int {
 		didSet {

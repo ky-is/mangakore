@@ -1,6 +1,8 @@
 import SwiftUI
 
 private var dragStartTime: Date?
+private var previousVolume = 0
+private var previousPage = 0
 
 struct ReadingContiguous: View {
 	let work: Work
@@ -11,20 +13,29 @@ struct ReadingContiguous: View {
 	@GestureState private var dragOffset: CGFloat?
 	@GestureState private var dragDirection: FloatingPointSign?
 
-	private let page0Data: CloudImage.Data
-	private let page1Data: CloudImage.Data
-	private let page2Data: CloudImage.Data
+	private let page0Data = CloudImage.Data()
+	private let page1Data = CloudImage.Data()
+	private let page2Data = CloudImage.Data()
 
 	init(work: Work, geometry: GeometryProxy, hasInteracted: Binding<Bool>) {
 		self.work = work
 		self.geometry = geometry
 		self._hasInteracted = hasInteracted
+		reloadPages()
+	}
 
-		let pageIndex = max(1, work.progress.page) - 1
+	private func getCurrentPageIndex() -> Int {
+		return max(1, work.progress.page) - 1
+	}
+
+	private func reloadPages() {
+		let pageIndex = getCurrentPageIndex()
 		let pages = work.progress.currentVolume.images
-		self.page0Data = CloudImage.Data(for: pages[safe: pageIndex - 1], priority: true)
-		self.page1Data = CloudImage.Data(for: pages[safe: pageIndex + 0], priority: true)
-		self.page2Data = CloudImage.Data(for: pages[safe: pageIndex + 1], priority: false)
+		self.page0Data.load(pages[safe: pageIndex - 1], priority: true)
+		self.page1Data.load(pages[safe: pageIndex + 0], priority: true)
+		self.page2Data.load(pages[safe: pageIndex + 1], priority: false)
+		previousPage = work.progress.page
+		previousVolume = work.progress.volume
 	}
 
 	var body: some View {
@@ -58,9 +69,11 @@ struct ReadingContiguous: View {
 							}
 						}
 						if interpretAsTap {
-							self.hasInteracted = true
+							if !self.hasInteracted {
+								self.hasInteracted = true
+							}
 							withAnimation {
-								UserSettings.shared.showUI.toggle()
+								LocalSettings.shared.showUI.toggle()
 							}
 						} else {
 							self.savedOffset += newOffset
@@ -78,6 +91,42 @@ struct ReadingContiguous: View {
 			.onReceive(work.progress.$volume) { _ in
 				self.savedOffset = 0
 				self.work.progress.currentVolume.cache(true)
+			}
+			.onReceive(work.progress.$page) { page in
+				guard previousVolume == self.work.progress.volume, page != previousPage else {
+					return print("unchanged", previousVolume, self.work.progress.volume, previousPage, page)
+				}
+				let pageIndex = self.getCurrentPageIndex()
+				let pages = self.work.progress.currentVolume.images
+				if page == previousPage + 1 {
+					if self.page1Data.image != nil {
+						self.page0Data.assign(self.page1Data)
+					} else {
+						self.page0Data.load(pages[safe: pageIndex - 1], priority: true)
+					}
+					if self.page2Data.image != nil {
+						self.page1Data.assign(self.page2Data)
+					} else {
+						self.page1Data.load(pages[safe: pageIndex + 0], priority: true)
+					}
+					self.page2Data.load(pages[safe: pageIndex + 1], priority: false)
+				} else if page == previousPage - 1 {
+					if self.page1Data.image != nil {
+						self.page2Data.assign(self.page1Data)
+					} else {
+						self.page2Data.load(pages[safe: pageIndex + 1], priority: true)
+					}
+					if self.page0Data.image != nil {
+						self.page1Data.assign(self.page0Data)
+					} else {
+						self.page1Data.load(pages[safe: pageIndex + 0], priority: true)
+					}
+					self.page0Data.load(pages[safe: pageIndex - 1], priority: true)
+				} else {
+					print("Unknown page transition", previousPage, page)
+					self.reloadPages()
+				}
+				previousPage = page
 			}
 	}
 
@@ -124,9 +173,9 @@ struct ReadingContiguous: View {
 	private func scrollToNewPage(offset: CGFloat) {
 		savedOffset += offset
 		if !hasInteracted {
-			hasInteracted = true
+//			hasInteracted = true
 			withAnimation {
-				UserSettings.shared.showUI = false
+				LocalSettings.shared.showUI = false
 			}
 		}
 	}

@@ -4,6 +4,7 @@ struct Reading: View {
 	let work: Work
 
 	@State private var showVolumeList = false
+	@ObservedObject private var localSettings = LocalSettings.shared
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	init(id: String) {
@@ -35,7 +36,7 @@ struct Reading: View {
 						.colorInvert(userSettings.invertContent)
 				}
 			)
-			.navigationBarHidden(!userSettings.showUI)
+			.navigationBarHidden(!localSettings.showUI)
 			.onAppear {
 				self.work.progress.startReading()
 				if self.work.progress.volume < 1 {
@@ -45,7 +46,7 @@ struct Reading: View {
 			.onDisappear {
 				self.work.progress.saveReadingTime(continuing: false)
 				withAnimation {
-					self.userSettings.showUI = true
+					self.localSettings.showUI = true
 				}
 				DataModel.shared.readingID = nil
 			}
@@ -88,10 +89,12 @@ private struct ReadingPage: View {
 	@ObservedObject var settings: WorkSettings
 
 	@ObservedObject private var userSettings = UserSettings.shared
+
 	private let advancePageWidth: CGFloat = 44
 	@State private var hasInteracted = false
 
 	init(work: Work) {
+		print(work.id)
 		self.work = work
 		self.settings = work.settings
 	}
@@ -99,24 +102,42 @@ private struct ReadingPage: View {
 	var body: some View {
 		GeometryReader { geometry in
 			ZStack {
-				Group {
-					if self.settings.contiguous {
-						ReadingContiguous(work: self.work, geometry: geometry, hasInteracted: self.$hasInteracted)
-					} else {
-						ReadingPaginated(work: self.work, geometry: geometry, hasInteracted: self.$hasInteracted)
-					}
-				}
+				ReadingPageRenderer(work: self.work, geometry: geometry, hasInteracted: self.$hasInteracted)
 					.colorInvert(self.userSettings.invertContent)
 					.scaleEffect(CGFloat(self.settings.magnification))
 					.onTapGesture {
-						self.hasInteracted = true
+						if !self.hasInteracted {
+							self.hasInteracted = true
+						}
 						withAnimation {
-							self.userSettings.showUI.toggle()
+							LocalSettings.shared.showUI.toggle()
 						}
 					}
-				if self.userSettings.showUI {
-					ReadingUI(work: self.work, geometry: geometry)
-				}
+				ReadingUI(work: self.work, geometry: geometry)
+			}
+		}
+	}
+}
+
+private struct ReadingPageRenderer: View {
+	let work: Work
+	@ObservedObject var settings: WorkSettings
+	let geometry: GeometryProxy
+	@Binding var hasInteracted: Bool
+
+	init(work: Work, geometry: GeometryProxy, hasInteracted: Binding<Bool>) {
+		self.work = work
+		self.settings = work.settings
+		self.geometry = geometry
+		self._hasInteracted = hasInteracted
+	}
+
+	var body: some View {
+		Group {
+			if settings.contiguous {
+				ReadingContiguous(work: work, geometry: geometry, hasInteracted: $hasInteracted)
+			} else {
+				ReadingPaginated(work: work, geometry: geometry, hasInteracted: $hasInteracted)
 			}
 		}
 	}
