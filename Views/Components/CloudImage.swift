@@ -98,22 +98,22 @@ extension CloudImage {
 			if let url = url, url.lastPathComponent.hasSuffix(".icloud") {
 				let imageFileName = String(url.lastPathComponent.dropFirst().dropLast(7))
 				self.url = url.deletingLastPathComponent().appendingPathComponent(imageFileName)
+				self.status = .downloading
+				self.image = nil
 				updateStatus()
 			} else {
 				self.url = url
 				if priority {
 					self.status = getStatus()
-					if url != nil {
-						self.image = UIImage(contentsOfFile: url!.path)
-					}
+					self.image = url != nil ? UIImage(contentsOfFile: url!.path) : nil
 				} else {
-					self.image = nil
 					self.status = .reading
+					self.image = nil
 				}
 			}
 		}
 
-		func assign(_ source: Data) {
+		func assign(from source: Data) {
 			url = source.url
 			image = source.image
 			status = source.status

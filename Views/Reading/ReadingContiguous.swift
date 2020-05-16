@@ -3,9 +3,11 @@ import SwiftUI
 private var dragStartTime: Date?
 private var previousVolume = 0
 private var previousPage = 0
+private var lastScrollDate: Date?
 
 struct ReadingContiguous: View {
 	let work: Work
+	let progress: WorkProgress
 	let geometry: GeometryProxy
 	@Binding var hasInteracted: Bool
 
@@ -19,27 +21,28 @@ struct ReadingContiguous: View {
 
 	init(work: Work, geometry: GeometryProxy, hasInteracted: Binding<Bool>) {
 		self.work = work
+		self.progress = work.progress
 		self.geometry = geometry
 		self._hasInteracted = hasInteracted
 		reloadPages()
 	}
 
-	private func getCurrentPageIndex() -> Int {
-		return max(1, work.progress.page) - 1
+	private func getIndex(of page: Int) -> Int {
+		return max(1, page) - 1
 	}
 
 	private func reloadPages() {
-		let pageIndex = getCurrentPageIndex()
-		let pages = work.progress.currentVolume.images
+		let pageIndex = getIndex(of: progress.page)
+		let pages = progress.currentVolume.images
 		self.page0Data.load(pages[safe: pageIndex - 1], priority: true)
 		self.page1Data.load(pages[safe: pageIndex + 0], priority: true)
 		self.page2Data.load(pages[safe: pageIndex + 1], priority: false)
-		previousPage = work.progress.page
-		previousVolume = work.progress.volume
+		previousPage = progress.page
+		previousVolume = progress.volume
 	}
 
 	var body: some View {
-		ReadingContiguousRenderer(work: work, page0Data: page0Data, page1Data: page1Data, page2Data: page2Data, geometry: geometry)
+		ReadingContiguousRenderer(page0Data: page0Data, page1Data: page1Data, page2Data: page2Data, isFirstVolume: progress.isFirstVolume, isLastVolume: progress.isLastVolume, isFirstPage: progress.isFirstPage, isLastPage: progress.isLastPage, geometry: geometry)
 			.contentShape(Rectangle())
 			.offset(y: getScrollDistance() - getPage0Height())
 			.frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
@@ -56,10 +59,14 @@ struct ReadingContiguous: View {
 						let newDragLocation = drag.location.y
 						let totalDragDistance = newDragLocation.distance(to: drag.startLocation.y)
 						if totalDragDistance >= 0 || totalDragDistance < -10 {
-							dragDirection = totalDragDistance.sign
+							let newDirection = totalDragDistance.sign
+							if newDirection != dragDirection {
+								dragDirection = newDirection
+							}
 						}
 					}
 					.onEnded { drag in
+						lastScrollDate = nil
 						let newOffset = self.getScroll(from: drag)
 						var interpretAsTap = false
 						if let startTime = dragStartTime, newOffset.magnitude < 10 {
@@ -88,43 +95,47 @@ struct ReadingContiguous: View {
 					}
 				}
 			)
-			.onReceive(work.progress.$volume) { _ in
-				self.savedOffset = 0
-				self.work.progress.currentVolume.cache(true)
-			}
-			.onReceive(work.progress.$page) { page in
-				guard previousVolume == self.work.progress.volume, page != previousPage else {
-					return //print("unchanged", previousVolume, self.work.progress.volume, previousPage, page)
+			.onReceive(progress.$page) { page in
+				let changedVolume = previousVolume != self.progress.volume
+				guard changedVolume || page != previousPage else {
+					return print("unchanged", previousVolume, self.progress.volume, previousPage, page)
 				}
-				let pageIndex = self.getCurrentPageIndex()
-				let pages = self.work.progress.currentVolume.images
-				if page == previousPage + 1 {
-					if self.page1Data.image != nil {
-						self.page0Data.assign(self.page1Data)
-					} else {
-						self.page0Data.load(pages[safe: pageIndex - 1], priority: true)
-					}
-					if self.page2Data.image != nil {
-						self.page1Data.assign(self.page2Data)
-					} else {
-						self.page1Data.load(pages[safe: pageIndex + 0], priority: true)
-					}
-					self.page2Data.load(pages[safe: pageIndex + 1], priority: false)
-				} else if page == previousPage - 1 {
-					if self.page1Data.image != nil {
-						self.page2Data.assign(self.page1Data)
-					} else {
-						self.page2Data.load(pages[safe: pageIndex + 1], priority: true)
-					}
-					if self.page0Data.image != nil {
-						self.page1Data.assign(self.page0Data)
-					} else {
-						self.page1Data.load(pages[safe: pageIndex + 0], priority: true)
-					}
-					self.page0Data.load(pages[safe: pageIndex - 1], priority: true)
-				} else {
-					print("Unknown page transition", previousPage, page)
+				if changedVolume {
 					self.reloadPages()
+					self.savedOffset = 0
+					self.progress.currentVolume.cache(true)
+				} else {
+					let pageChange = page - previousPage
+					let pageIndex = self.getIndex(of: page)
+					let pages = self.progress.currentVolume.images
+					if pageChange == +1 {
+						if self.page1Data.image != nil {
+							self.page0Data.assign(from: self.page1Data)
+						} else {
+							self.page0Data.load(pages[safe: pageIndex - 1], priority: true)
+						}
+						if self.page2Data.image != nil {
+							self.page1Data.assign(from: self.page2Data)
+						} else {
+							self.page1Data.load(pages[safe: pageIndex + 0], priority: true)
+						}
+						self.page2Data.load(pages[safe: pageIndex + 1], priority: false)
+					} else if pageChange == -1 {
+						if self.page1Data.image != nil {
+							self.page2Data.assign(from: self.page1Data)
+						} else {
+							self.page2Data.load(pages[safe: pageIndex + 1], priority: true)
+						}
+						if self.page0Data.image != nil {
+							self.page1Data.assign(from: self.page0Data)
+						} else {
+							self.page1Data.load(pages[safe: pageIndex + 0], priority: true)
+						}
+						self.page0Data.load(pages[safe: pageIndex - 1], priority: true)
+					} else {
+						print("Unknown page transition", previousPage, page)
+						self.reloadPages()
+					}
 				}
 				previousPage = page
 			}
@@ -149,20 +160,20 @@ struct ReadingContiguous: View {
 		}
 		let distance = -getScrollDistance()
 		if offset > 0 { // Scrolled up
-			let willAdvanceVolume = work.progress.isFirstPage
+			let willAdvanceVolume = progress.isFirstPage
 			let page0Height = getPage0Height()
 			let threshold = willAdvanceVolume ? -page0Height : -page0Height / 2
 			if distance < threshold {
-				work.progress.advancePage(forward: false)
+				progress.advancePage(forward: false)
 				if !willAdvanceVolume {
 					scrollToNewPage(offset: -page0Height)
 				}
 			}
 		} else { // Scrolled down
-			let willAdvanceVolume = work.progress.isLastPage
+			let willAdvanceVolume = progress.isLastPage
 			let threshold = willAdvanceVolume ? page1Height : page1Height / 2
 			if distance > threshold {
-				work.progress.advancePage(forward: true)
+				progress.advancePage(forward: true)
 				if !willAdvanceVolume {
 					scrollToNewPage(offset: page1Height)
 				}
@@ -173,7 +184,7 @@ struct ReadingContiguous: View {
 	private func scrollToNewPage(offset: CGFloat) {
 		savedOffset += offset
 		if !hasInteracted {
-//			hasInteracted = true
+			hasInteracted = true
 			withAnimation {
 				LocalSettings.shared.showUI = false
 			}
@@ -182,35 +193,38 @@ struct ReadingContiguous: View {
 }
 
 private struct ReadingContiguousRenderer: View {
-	let work: Work
+	let page0Data: CloudImage.Data
+	let page1Data: CloudImage.Data
+	let page2Data: CloudImage.Data
+	let isFirstVolume: Bool
+	let isLastVolume: Bool
+	let isFirstPage: Bool
+	let isLastPage: Bool
 	let screenHeight: CGFloat
-	var page0Data: CloudImage.Data
-	var page1Data: CloudImage.Data
-	var page2Data: CloudImage.Data
 
-	@ObservedObject private var progress: WorkProgress
-
-	init(work: Work, page0Data: CloudImage.Data, page1Data: CloudImage.Data, page2Data: CloudImage.Data, geometry: GeometryProxy) {
-		self.work = work
-		self.progress = work.progress
-		self.screenHeight = geometry.size.height
+	init(page0Data: CloudImage.Data, page1Data: CloudImage.Data, page2Data: CloudImage.Data, isFirstVolume: Bool, isLastVolume: Bool, isFirstPage: Bool, isLastPage: Bool, geometry: GeometryProxy) {
 		self.page0Data = page0Data
 		self.page1Data = page1Data
 		self.page2Data = page2Data
+		self.isFirstVolume = isFirstVolume
+		self.isLastVolume = isLastVolume
+		self.isFirstPage = isFirstPage
+		self.isLastPage = isLastPage
+		self.screenHeight = geometry.size.height
 	}
 
 	var body: some View {
 		VStack(spacing: 0) {
-			if progress.isFirstPage {
-				AdvancePage(label: progress.volume > 1 ? "前章" : "未読", alignment: .bottom, height: screenHeight)
+			if isFirstPage {
+				AdvancePage(label: isFirstVolume ? "未読" : "前章", alignment: .bottom, height: screenHeight)
 			} else {
 				CloudImage(page0Data, contentMode: .fill, defaultHeight: screenHeight)
 			}
 			CloudImage(page1Data, contentMode: .fill, defaultHeight: screenHeight)
-			if !progress.isLastPage {
+			if !isLastPage {
 				CloudImage(page2Data, contentMode: .fill, defaultHeight: screenHeight)
 			} else {
-				AdvancePage(label: progress.volume < work.volumes.count ? "次章" : "読破", alignment: .top, height: screenHeight)
+				AdvancePage(label: isLastVolume ? "読破": "次章", alignment: .top, height: screenHeight)
 			}
 		}
 	}
@@ -236,13 +250,20 @@ private struct ActiveScrolling: View {
 	let direction: FloatingPointSign?
 	let onScroll: (CGFloat) -> Void
 
-	private let timer = Timer.publish(every: 0, on: .main, in: .default).autoconnect()
+	private let timer = Timer.publish(every: 1/1000, on: .main, in: .default).autoconnect()
 
 	var body: some View {
 		Rectangle()
 			.hidden()
-			.onReceive(timer) { _ in
-				self.onScroll(-0.1 * CGFloat(self.direction.sign))
+			.onReceive(timer) { date in
+				let distance: CGFloat
+				if let lastScrollDate = lastScrollDate {
+					distance = CGFloat(lastScrollDate.distance(to: date))
+					if distance < 0.050 {
+						self.onScroll(-distance * 300 * CGFloat(self.direction.sign))
+					}
+				}
+				lastScrollDate = date
 			}
 	}
 }

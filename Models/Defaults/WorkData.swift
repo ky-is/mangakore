@@ -160,14 +160,20 @@ final class WorkProgress: ObservableObject {
 		volume >= volumes.count && page >= (volumes.last?.pageCount ?? 0)
 	}
 
-	var currentVolume: Volume {
-		volumes[max(0, volume - 1)]
-	}
-
 	var isFirstPage: Bool {
 		page == 1
 	}
 	var isLastPage: Bool {
 		page == currentVolume.pageCount
+	}
+
+	var currentVolume: Volume {
+		volumes[max(0, volume - 1)]
+	}
+	var isFirstVolume: Bool {
+		volume == 1
+	}
+	var isLastVolume: Bool {
+		volume == volumes.count
 	}
 }
