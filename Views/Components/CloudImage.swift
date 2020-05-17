@@ -4,24 +4,32 @@ import SwiftUI
 struct CloudImage: View {
 	let contentMode: ContentMode
 	let defaultHeight: CGFloat?
+	let progress: WorkProgress?
+	let forward: Bool?
 
 	@ObservedObject private var data: Data
 
-	init(_ data: Data, contentMode: ContentMode, defaultHeight: CGFloat? = nil) {
+	init(_ data: Data, contentMode: ContentMode, defaultHeight: CGFloat? = nil, progress: WorkProgress? = nil, forward: Bool = true) {
 		self.data = data
-		self.defaultHeight = defaultHeight
 		self.contentMode = contentMode
+		self.defaultHeight = defaultHeight
+		self.progress = progress
+		self.forward = forward
 	}
 
 	init(_ url: URL?, priority: Bool, contentMode: ContentMode, defaultHeight: CGFloat? = nil) {
 		self.contentMode = contentMode
 		self.defaultHeight = defaultHeight
 		self.data = Data(for: url, priority: priority)
+		self.progress = nil
+		self.forward = nil
 	}
 
 	var body: some View {
 		Group {
-			if data.image != nil {
+			if progress != nil && data.url == nil {
+				CloudImagePlaceholder(defaultHeight: defaultHeight, progress: progress!, forward: forward!)
+			} else if data.image != nil {
 				Image(uiImage: data.image!)
 					.resizable()
 					.aspectRatio(contentMode: contentMode)
@@ -140,6 +148,24 @@ private struct CloudImageInvalid: View {
 
 	var body: some View {
 		Text(status == .downloading ? "☁️" : (status == .error ? "❌" : "⋯"))
+			.font(.largeTitle)
+			.frame(maxWidth: .infinity, maxHeight: defaultHeight ?? .infinity)
+	}
+}
+
+private struct CloudImagePlaceholder: View {
+	let defaultHeight: CGFloat?
+	let label: String
+
+	init(defaultHeight: CGFloat?, progress: WorkProgress, forward: Bool) {
+		self.defaultHeight = defaultHeight
+		self.label = forward
+			? (progress.isLastVolume ? "読破": "次章")
+			: (progress.isFirstVolume ? "未読" : "前章")
+	}
+
+	var body: some View {
+		Text(label)
 			.font(.largeTitle)
 			.frame(maxWidth: .infinity, maxHeight: defaultHeight ?? .infinity)
 	}

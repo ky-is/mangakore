@@ -10,17 +10,42 @@ struct ReadingContiguous: View {
 	let progress: WorkProgress
 	let geometry: GeometryProxy
 
-	@State private var savedOffset: CGFloat = 0
-	@GestureState private var dragOffset: CGFloat?
-	@GestureState private var dragDirection: FloatingPointSign?
-
 	private let page0Data = CloudImage.Data()
 	private let page1Data = CloudImage.Data()
 	private let page2Data = CloudImage.Data()
 
 	init(work: Work, geometry: GeometryProxy) {
+		print(ReadingContiguous.self)
 		self.work = work
 		self.progress = work.progress
+		self.geometry = geometry
+	}
+
+	var body: some View {
+		ReadingContiguousRenderer(progress: progress, page0Data: page0Data, page1Data: page1Data, page2Data: page2Data, geometry: geometry)
+			.contentShape(Rectangle())
+			.frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
+			.modifier(ReadingContiguousModifier(progress: progress, page0Data: page0Data, page1Data: page1Data, page2Data: page2Data, geometry: geometry))
+
+	}
+}
+
+private struct ReadingContiguousModifier: ViewModifier {
+	let progress: WorkProgress
+	let page0Data: CloudImage.Data
+	let page1Data: CloudImage.Data
+	let page2Data: CloudImage.Data
+	let geometry: GeometryProxy
+
+	@State private var savedOffset: CGFloat = 0
+	@GestureState private var dragOffset: CGFloat?
+	@GestureState private var dragDirection: FloatingPointSign?
+
+	init(progress: WorkProgress, page0Data: CloudImage.Data, page1Data: CloudImage.Data, page2Data: CloudImage.Data, geometry: GeometryProxy) {
+		self.progress = progress
+		self.page0Data = page0Data
+		self.page1Data = page1Data
+		self.page2Data = page2Data
 		self.geometry = geometry
 		reloadPages()
 	}
@@ -39,11 +64,59 @@ struct ReadingContiguous: View {
 		previousVolume = progress.volume
 	}
 
-	var body: some View {
-		ReadingContiguousRenderer(page0Data: page0Data, page1Data: page1Data, page2Data: page2Data, isFirstVolume: progress.isFirstVolume, isLastVolume: progress.isLastVolume, isFirstPage: progress.isFirstPage, isLastPage: progress.isLastPage, geometry: geometry)
-			.contentShape(Rectangle())
+	private func getScroll(from drag: DragGesture.Value) -> CGFloat {
+		return drag.translation.height * 3
+	}
+
+	private func getPage0Height() -> CGFloat {
+		return page0Data.image?.size.height(atWidth: geometry.size.width) ?? geometry.size.height
+	}
+
+	private func getScrollDistance() -> CGFloat {
+		return savedOffset + (dragOffset ?? 0)
+	}
+
+	private func onScroll(offset: CGFloat) {
+		savedOffset += offset
+		guard let page1Height = self.page1Data.image?.size.height(atWidth: geometry.size.width) else {
+			return
+		}
+		let distance = -getScrollDistance()
+		if offset > 0 { // Scrolled up
+			let willAdvanceVolume = progress.isFirstPage
+			let page0Height = getPage0Height()
+			let threshold = willAdvanceVolume ? -page0Height : -page0Height / 2
+			if distance < threshold {
+				progress.advancePage(forward: false)
+				if !willAdvanceVolume {
+					scrollToNewPage(offset: -page0Height)
+				}
+			}
+		} else { // Scrolled down
+			let willAdvanceVolume = progress.isLastPage
+			let threshold = willAdvanceVolume ? page1Height : page1Height / 2
+			if distance > threshold {
+				progress.advancePage(forward: true)
+				if !willAdvanceVolume {
+					scrollToNewPage(offset: page1Height)
+				}
+			}
+		}
+	}
+
+	private func scrollToNewPage(offset: CGFloat) {
+		savedOffset += offset
+		if !LocalSettings.shared.hasInteracted {
+			LocalSettings.shared.hasInteracted = true
+			withAnimation {
+				LocalSettings.shared.showUI = false
+			}
+		}
+	}
+
+	func body(content: Content) -> some View {
+		content
 			.offset(y: getScrollDistance() - getPage0Height())
-			.frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
 			.gesture(
 				DragGesture(minimumDistance: 0)
 					.updating($dragOffset) { drag, dragOffset, transaction in
@@ -138,92 +211,28 @@ struct ReadingContiguous: View {
 				previousPage = page
 			}
 	}
-
-	private func getScroll(from drag: DragGesture.Value) -> CGFloat {
-		return drag.translation.height * 3
-	}
-
-	private func getPage0Height() -> CGFloat {
-		return page0Data.image?.size.height(atWidth: geometry.size.width) ?? geometry.size.height
-	}
-
-	private func getScrollDistance() -> CGFloat {
-		return savedOffset + (dragOffset ?? 0)
-	}
-
-	private func onScroll(offset: CGFloat) {
-		savedOffset += offset
-		guard let page1Height = self.page1Data.image?.size.height(atWidth: geometry.size.width) else {
-			return
-		}
-		let distance = -getScrollDistance()
-		if offset > 0 { // Scrolled up
-			let willAdvanceVolume = progress.isFirstPage
-			let page0Height = getPage0Height()
-			let threshold = willAdvanceVolume ? -page0Height : -page0Height / 2
-			if distance < threshold {
-				progress.advancePage(forward: false)
-				if !willAdvanceVolume {
-					scrollToNewPage(offset: -page0Height)
-				}
-			}
-		} else { // Scrolled down
-			let willAdvanceVolume = progress.isLastPage
-			let threshold = willAdvanceVolume ? page1Height : page1Height / 2
-			if distance > threshold {
-				progress.advancePage(forward: true)
-				if !willAdvanceVolume {
-					scrollToNewPage(offset: page1Height)
-				}
-			}
-		}
-	}
-
-	private func scrollToNewPage(offset: CGFloat) {
-		savedOffset += offset
-		if !LocalSettings.shared.hasInteracted {
-			LocalSettings.shared.hasInteracted = true
-			withAnimation {
-				LocalSettings.shared.showUI = false
-			}
-		}
-	}
 }
 
 private struct ReadingContiguousRenderer: View {
+	let progress: WorkProgress
 	let page0Data: CloudImage.Data
 	let page1Data: CloudImage.Data
 	let page2Data: CloudImage.Data
-	let isFirstVolume: Bool
-	let isLastVolume: Bool
-	let isFirstPage: Bool
-	let isLastPage: Bool
 	let screenHeight: CGFloat
 
-	init(page0Data: CloudImage.Data, page1Data: CloudImage.Data, page2Data: CloudImage.Data, isFirstVolume: Bool, isLastVolume: Bool, isFirstPage: Bool, isLastPage: Bool, geometry: GeometryProxy) {
+	init(progress: WorkProgress, page0Data: CloudImage.Data, page1Data: CloudImage.Data, page2Data: CloudImage.Data, geometry: GeometryProxy) {
+		self.progress = progress
 		self.page0Data = page0Data
 		self.page1Data = page1Data
 		self.page2Data = page2Data
-		self.isFirstVolume = isFirstVolume
-		self.isLastVolume = isLastVolume
-		self.isFirstPage = isFirstPage
-		self.isLastPage = isLastPage
 		self.screenHeight = geometry.size.height
 	}
 
 	var body: some View {
 		VStack(spacing: 0) {
-			if isFirstPage {
-				AdvancePage(label: isFirstVolume ? "未読" : "前章", alignment: .bottom, height: screenHeight)
-			} else {
-				CloudImage(page0Data, contentMode: .fill, defaultHeight: screenHeight)
-			}
+			CloudImage(page0Data, contentMode: .fill, defaultHeight: screenHeight, progress: progress, forward: false)
 			CloudImage(page1Data, contentMode: .fill, defaultHeight: screenHeight)
-			if !isLastPage {
-				CloudImage(page2Data, contentMode: .fill, defaultHeight: screenHeight)
-			} else {
-				AdvancePage(label: isLastVolume ? "読破": "次章", alignment: .top, height: screenHeight)
-			}
+			CloudImage(page2Data, contentMode: .fill, defaultHeight: screenHeight, progress: progress, forward: true)
 		}
 	}
 }
