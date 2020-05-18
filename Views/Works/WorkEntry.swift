@@ -17,7 +17,6 @@ struct WorkIcon: View {
 	}
 }
 
-
 struct WorkProgressStats: View {
 	let work: Work
 
@@ -41,7 +40,6 @@ struct WorkProgressStats: View {
 			.font(Font.subheadline.monospacedDigit())
 	}
 }
-
 
 struct WorkProgressVolume: View {
 	let work: Work
@@ -83,14 +81,11 @@ struct WorkProgressPage: View {
 }
 
 struct WorkEntry_Previews: PreviewProvider {
-	static let sampleWork = Work(FileManager.default.url(forUbiquityContainerIdentifier: nil)!)!
+	static let sampleWork = Work(URL(string: "")!)!
 
 	static var previews: some View {
 		VStack {
-			HStack {
-				WorkProgressVolume(work: sampleWork)
-				WorkProgressPage(work: sampleWork)
-			}
+			WorkProgressStats(work: sampleWork)
 			WorkIcon(sampleWork)
 		}
 	}

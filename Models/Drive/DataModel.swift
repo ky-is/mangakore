@@ -31,8 +31,7 @@ final class DataModel: ObservableObject {
 	}
 
 	func update() {
-		works = CloudContainer.contents?
-			.compactMap { Work($0) }
+		works = CloudContainer.contents?.compactMap { Work($0) }
 		readingID = NSUbiquitousKeyValueStore.default.string(forKey: NSUbiquitousKeyValueStore.savedWorkIDKey)
 	}
 }

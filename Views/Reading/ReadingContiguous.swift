@@ -15,7 +15,6 @@ struct ReadingContiguous: View {
 	private let page2Data = CloudImage.Data()
 
 	init(work: Work, geometry: GeometryProxy) {
-		print(ReadingContiguous.self)
 		self.work = work
 		self.progress = work.progress
 		self.geometry = geometry

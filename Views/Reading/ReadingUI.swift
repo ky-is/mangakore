@@ -54,10 +54,10 @@ private struct NavigationVolumeButton: View {
 		NavigationEmojiButton("📖") {
 			self.showVolumeList.toggle()
 		}
-		.popover(isPresented: $showVolumeList, attachmentAnchor: .point(.bottom), arrowEdge: .top) {
-			VolumeList(work: self.work)
-				.environmentObject(DataModel.shared)
-		}
+			.popover(isPresented: $showVolumeList, attachmentAnchor: .point(.bottom), arrowEdge: .top) {
+				VolumeList(work: self.work)
+					.environmentObject(DataModel.shared)
+			}
 	}
 }
 
@@ -85,10 +85,10 @@ private struct VolumeList: View {
 					Text("\(volume.id)巻")
 				}
 			}
-			.disabled(volume == currentVolume)
+				.disabled(volume == currentVolume)
 		}
-		.font(Font.body.monospacedDigit())
-		.frame(minWidth: 256, minHeight: 256)
+			.font(Font.body.monospacedDigit())
+			.frame(minWidth: 256, minHeight: 256)
 	}
 }
 

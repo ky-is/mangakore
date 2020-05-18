@@ -12,18 +12,18 @@ struct Volume: Equatable, Identifiable {
 		self.images = urls
 			.filter { url in
 				return imageExtensions.contains { url.lastPathComponent.lowercased().contains($0) }
-		}
-		.sorted { a, b in
-			var aName = a.lastPathComponent
-			var bName = b.lastPathComponent
-			if aName.first == "." {
-				aName = String(aName.dropFirst())
 			}
-			if bName.first == "." {
-				bName = String(bName.dropFirst())
+			.sorted { a, b in
+				var aName = a.lastPathComponent
+				var bName = b.lastPathComponent
+				if aName.first == "." {
+					aName = String(aName.dropFirst())
+				}
+				if bName.first == "." {
+					bName = String(bName.dropFirst())
+				}
+				return aName.caseInsensitiveCompare(bName) == .orderedAscending
 			}
-			return aName.compare(bName) == .orderedAscending
-		}
 		icon?.cache(true)
 	}
 
@@ -68,7 +68,7 @@ struct Work: Equatable, Identifiable {
 			volumes = [Volume(1, root: root, urls: contents)]
 		} else {
 			let directories = childDirectories
-				.sorted { a, b in a.lastPathComponent.compare(b.lastPathComponent) == .orderedAscending }
+				.sorted { a, b in a.lastPathComponent.caseInsensitiveCompare(b.lastPathComponent) == .orderedAscending }
 			var volumesAccumulator: [Volume] = []
 			var currentVolume = 1
 			directories.forEach { url in

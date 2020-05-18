@@ -46,7 +46,6 @@ private struct ReadingPaginatedPage: View {
 	}
 }
 
-
 private struct ReadingPageToggle: View {
 	let progress: WorkProgress
 	let forward: Bool
