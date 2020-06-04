@@ -147,7 +147,7 @@ private struct CloudImageInvalid: View {
 	let defaultHeight: CGFloat?
 
 	var body: some View {
-		Text(status == .downloading ? "☁️" : (status == .error ? "❌" : "⋯"))
+		Image(systemName: status == .downloading ? "icloud.and.arrow.down" : (status == .error ? "exclamationmark.icloud" : "icloud"))
 			.font(.largeTitle)
 			.frame(maxWidth: .infinity, maxHeight: defaultHeight ?? .infinity)
 	}

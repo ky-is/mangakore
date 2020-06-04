@@ -37,10 +37,9 @@ private struct NavigationInvertButton: View {
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	var body: some View {
-		NavigationEmojiButton("☯️") {
+		NavigationButton(image: userSettings.invertContent ? "circle.righthalf.fill" : "circle.lefthalf.fill") {
 			self.userSettings.invertContent = !self.userSettings.invertContent
 		}
-			.colorInvert(userSettings.invertContent)
 	}
 }
 
@@ -105,13 +104,15 @@ private struct ReadingBar: View {
 		VStack(spacing: 0) {
 			Divider()
 			HStack(spacing: 0) {
+				NavigationSpacer()
+				NavigationSpacer()
 				Spacer()
 				WorkProgressStats(work: work)
 				Spacer()
 				ReadingMagnification(work: work)
 			}
 				.frame(height: 44)
-				.padding(.horizontal)
+				.padding(.horizontal, 8)
 				.padding(.bottom, geometry.safeAreaInsets.bottom)
 		}
 			.transition(.opacity)
@@ -129,15 +130,16 @@ private struct ReadingMagnification: View {
 
 	var body: some View {
 		Group {
-			NavigationUnicodeButton("⊖") {
+			NavigationButton(image: "minus.magnifyingglass") {
 				self.settings.magnification = max(1, self.settings.magnification - 0.025)
 			}
 				.disabled(settings.magnification <= 1)
-			NavigationUnicodeButton("⊕") {
+			NavigationButton(image: "plus.magnifyingglass") {
 				self.settings.magnification = self.settings.magnification + 0.025
 			}
 				.disabled(settings.magnification > 1.5)
 		}
+			.frame(width: 44)
 	}
 }
 

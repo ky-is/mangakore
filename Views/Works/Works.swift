@@ -113,8 +113,9 @@ private struct WorksEntry: View {
 			Button(action: {
 				self.showOptions = true
 			}) {
-				Text("⋯")
-					.bold()
+				Image(systemName: "ellipsis.circle")
+					.font(.system(size: 22, weight: .light))
+					.foregroundColor(.secondary)
 					.actionPopover(isPresented: $showOptions) {
 						ActionPopover(title: Text(self.work.name).font(.title), message: nil, accentColor: .primary, buttons: [
 							.destructive(Text("Reset reading progress")) {
@@ -130,14 +131,9 @@ private struct WorksEntry: View {
 							.cancel(),
 						])
 					}
-					.frame(size: 28)
-					.background(
-						Circle()
-							.fill(Color.gray.opacity(0.5))
-					)
 			}
 				.buttonStyle(BorderlessButtonStyle())
-				.frame(size: 44)
+				.frame(size: 48)
 		}
 			.listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 0))
 			.accentColor(.primary)
