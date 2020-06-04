@@ -73,8 +73,8 @@ private struct NavigationVolumeButton: View {
 
 private struct VolumeList: View {
 	let work: Work
-
 	@ObservedObject private var progress: WorkProgress
+
 	@Environment(\.presentationMode) private var presentationMode
 
 	init(work: Work) {

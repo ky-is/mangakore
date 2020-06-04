@@ -25,7 +25,6 @@ struct ReadingContiguous: View {
 			.contentShape(Rectangle())
 			.frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
 			.modifier(ReadingContiguousModifier(progress: progress, page0Data: page0Data, page1Data: page1Data, page2Data: page2Data, geometry: geometry))
-
 	}
 }
 

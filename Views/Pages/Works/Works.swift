@@ -117,19 +117,28 @@ private struct WorksEntry: View {
 					.font(.system(size: 22, weight: .light))
 					.foregroundColor(.secondary)
 					.actionPopover(isPresented: $showOptions) {
-						ActionPopover(title: Text(self.work.name).font(.title), message: nil, accentColor: .primary, buttons: [
-							.destructive(Text("Reset reading progress")) {
-								self.work.progress.volume = 0
-								self.work.progress.page = 0
-							},
-							.default(Text("Cache local copy")) {
-								self.work.cache(true)
-							},
-							.destructive(Text("Remove local copy")) {
-								self.work.cache(false)
-							},
-							.cancel(),
-						])
+						ActionPopover(
+							title:
+								Text(self.work.name)
+									.font(.headline)
+									.foregroundColor(.secondary)
+							,
+							message: nil,
+							accentColor: .primary,
+							buttons: [
+								.destructive(Text("Reset reading progress")) {
+									self.work.progress.volume = 0
+									self.work.progress.page = 0
+								},
+								.default(Text("Cache local copy")) {
+									self.work.cache(true)
+								},
+								.destructive(Text("Remove local copy")) {
+									self.work.cache(false)
+								},
+								.cancel(),
+							]
+						)
 					}
 			}
 				.buttonStyle(BorderlessButtonStyle())

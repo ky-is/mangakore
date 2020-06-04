@@ -62,9 +62,9 @@ struct ActionPopover {
 					}, label: {
 						button.label
 							.font(.system(size: 18))
+							.frame(width: self.width, height: self.height)
 					})
 						.accentColor(button.kind == .destructive ? .red : self.accentColor)
-						.frame(width: self.width, height: self.height)
 				}
 			}
 		}

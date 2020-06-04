@@ -78,6 +78,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		242ACE6D24894364001308E3 /* Pages */ = {
+			isa = PBXGroup;
+			children = (
+				249247CA24633C7900D91ACD /* Works */,
+				249247C924633C7400D91ACD /* Reading */,
+			);
+			path = Pages;
+			sourceTree = "<group>";
+		};
 		244146912461D8FE008EAFDA = {
 			isa = PBXGroup;
 			children = (
@@ -125,8 +134,7 @@
 			children = (
 				248027F8246500480004230F /* Components */,
 				24515B512463608800C3D31A /* Modifiers */,
-				249247CA24633C7900D91ACD /* Works */,
-				249247C924633C7400D91ACD /* Reading */,
+				242ACE6D24894364001308E3 /* Pages */,
 			);
 			path = Views;
 			sourceTree = "<group>";
