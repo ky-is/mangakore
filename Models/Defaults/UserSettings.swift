@@ -13,4 +13,10 @@ final class UserSettings: ObservableObject {
 			save(value: invertContent)
 		}
 	}
+
+	@Published var darkContent = UserDefaults.standard.bool(forKey: #function) {
+		didSet {
+			save(value: invertContent)
+		}
+	}
 }

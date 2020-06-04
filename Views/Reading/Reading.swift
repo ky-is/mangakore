@@ -81,7 +81,9 @@ private struct ReadingPageContent: View {
 			}
 		}
 			.colorInvert(userSettings.invertContent)
+			.opacity(userSettings.darkContent ? 2/3 : 1)
 			.scaleEffect(CGFloat(settings.magnification))
+			.background(Color.black)
 	}
 }
 

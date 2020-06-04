@@ -26,6 +26,7 @@ struct ReadingUINavigationModifier: ViewModifier {
 			.navigationBarItems(trailing:
 				HStack {
 					NavigationVolumeButton(work: work)
+					NavigationDarkButton()
 					NavigationInvertButton()
 				}
 			)
@@ -43,6 +44,16 @@ private struct NavigationInvertButton: View {
 	}
 }
 
+private struct NavigationDarkButton: View {
+	@ObservedObject private var userSettings = UserSettings.shared
+
+	var body: some View {
+		NavigationButton(image: userSettings.darkContent ? "light.min" : "light.max") {
+			self.userSettings.darkContent = !self.userSettings.darkContent
+		}
+	}
+}
+
 private struct NavigationVolumeButton: View {
 	let work: Work
 
@@ -50,7 +61,7 @@ private struct NavigationVolumeButton: View {
 	@ObservedObject private var userSettings = UserSettings.shared
 
 	var body: some View {
-		NavigationEmojiButton("📖") {
+		NavigationButton(image: "book.fill") {
 			self.showVolumeList.toggle()
 		}
 			.popover(isPresented: $showVolumeList, attachmentAnchor: .point(.bottom), arrowEdge: .top) {
