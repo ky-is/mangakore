@@ -140,16 +140,21 @@ private struct ReadingMagnification: View {
 	}
 
 	var body: some View {
-		Group {
+		let canZoomOut = settings.magnification > 1
+		let canZoomIn = settings.magnification < 1.5
+		return Group {
 			NavigationButton(image: "minus.magnifyingglass") {
 				self.settings.magnification = max(1, self.settings.magnification - 0.025)
 			}
-				.disabled(settings.magnification <= 1)
+				.disabled(!canZoomOut)
+				.opacity(canZoomOut ? 1 : 2/3)
 			NavigationButton(image: "plus.magnifyingglass") {
 				self.settings.magnification = self.settings.magnification + 0.025
 			}
-				.disabled(settings.magnification > 1.5)
+				.disabled(!canZoomIn)
+				.opacity(canZoomIn ? 1 : 2/3)
 		}
+			.animation(.default)
 			.frame(width: 44)
 	}
 }

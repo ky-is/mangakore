@@ -112,6 +112,10 @@ private struct ReadingContiguousModifier: ViewModifier {
 		}
 	}
 
+	private func rejectEdgeGestures(for drag: DragGesture.Value) -> Bool {
+		return LocalSettings.shared.showUI && drag.startLocation.x < 10.5
+	}
+
 	func body(content: Content) -> some View {
 		content
 			.offset(y: getScrollDistance() - getPage0Height())
@@ -121,16 +125,19 @@ private struct ReadingContiguousModifier: ViewModifier {
 						if dragStartTime == nil {
 							dragStartTime = drag.time
 						}
-						let newOffset = self.getScroll(from: drag)
-						dragOffset = newOffset
+						if !self.rejectEdgeGestures(for: drag) {
+							let newOffset = self.getScroll(from: drag)
+							dragOffset = newOffset
+						}
 					}
 					.updating($dragDirection) { drag, dragDirection, transaction in
-						let newDragLocation = drag.location.y
-						let totalDragDistance = newDragLocation.distance(to: drag.startLocation.y)
-						if totalDragDistance >= 0 || totalDragDistance < -10 {
-							let newDirection = totalDragDistance.sign
-							if newDirection != dragDirection {
-								dragDirection = newDirection
+						if dragDirection != nil || !self.rejectEdgeGestures(for: drag) {
+							let totalDragDistance = drag.translation.height
+							if totalDragDistance >= 0 || totalDragDistance < -10 {
+								let newDirection = totalDragDistance.sign
+								if newDirection != dragDirection {
+									dragDirection = newDirection
+								}
 							}
 						}
 					}
@@ -152,7 +159,9 @@ private struct ReadingContiguousModifier: ViewModifier {
 								LocalSettings.shared.showUI.toggle()
 							}
 						} else {
-							self.savedOffset += newOffset
+							if !self.rejectEdgeGestures(for: drag) {
+								self.savedOffset += newOffset
+							}
 						}
 						dragStartTime = nil
 					}
@@ -265,7 +274,7 @@ private struct ActiveScrolling: View {
 				if let lastScrollDate = lastScrollDate {
 					distance = CGFloat(lastScrollDate.distance(to: date))
 					if distance < 0.050 {
-						self.onScroll(-distance * 300 * CGFloat(self.direction.sign))
+						self.onScroll(distance * 300 * CGFloat(self.direction.sign))
 					}
 				}
 				lastScrollDate = date
